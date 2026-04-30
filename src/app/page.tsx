@@ -152,8 +152,10 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    void loadRecords(visibleMonth.year, visibleMonth.month);
-  }, [loadRecords, visibleMonth]);
+    void Promise.resolve().then(() =>
+      loadRecords(visibleMonth.year, visibleMonth.month)
+    );
+  }, [loadRecords, visibleMonth.month, visibleMonth.year]);
 
   const handleDayClick = (date: string) => {
     setSelectedDate(date);

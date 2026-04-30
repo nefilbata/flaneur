@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import type { FoodRecord } from "@/types/food-record";
 
 interface DayCellProps {
-  day: number | null; // null = empty cell (padding)
+  day: number | null;
   isToday: boolean;
   record?: FoodRecord;
   onClick?: () => void;
@@ -15,57 +16,53 @@ export function DayCell({ day, isToday, record, onClick }: DayCellProps) {
     return <div className="aspect-square" />;
   }
 
-  const hasRecord = !!record;
+  const hasRecord = Boolean(record);
+  const cover = record?.photos?.[0];
 
   return (
     <motion.button
+      type="button"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`
-        relative aspect-square rounded-2xl overflow-hidden
-        transition-all duration-200 cursor-pointer
-        flex items-center justify-center
-        ${isToday
-          ? "ring-2 ring-primary-strong ring-offset-2 ring-offset-background"
-          : ""
-        }
-        ${hasRecord
+      className={[
+        "relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-2xl transition-all duration-200",
+        isToday ? "ring-2 ring-primary-strong ring-offset-2 ring-offset-background" : "",
+        hasRecord
           ? "shadow-md hover:shadow-lg"
-          : "border-2 border-dashed border-border hover:border-primary/50 hover:bg-soft/50"
-        }
-      `}
+          : "border-2 border-dashed border-border hover:border-primary/50 hover:bg-soft/50",
+      ].join(" ")}
     >
-      {/* 有记录：显示美食图片 */}
-      {hasRecord && record?.photos?.[0] ? (
+      {cover ? (
         <>
-          <img
-            src={record.photos[0].url}
-            alt={record.dishName}
-            className="absolute inset-0 w-full h-full object-cover"
+          <Image
+            src={cover.url}
+            alt={record?.dishName ?? "美食记录"}
+            fill
+            sizes="80px"
+            className="object-cover"
+            unoptimized
           />
-          {/* 底部渐变遮罩 + 日期 */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-white text-xs font-medium drop-shadow-sm">
+          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-medium text-white drop-shadow-sm">
             {day}
           </span>
         </>
       ) : hasRecord ? (
-        /* 有记录但没图片 */
-        <div className="w-full h-full bg-primary/15 flex flex-col items-center justify-center gap-0.5">
-          <span className="text-lg">🍽</span>
+        <div className="flex size-full flex-col items-center justify-center gap-0.5 bg-primary/15">
+          <span className="text-lg">🍜</span>
           <span className="text-xs text-muted">{day}</span>
         </div>
       ) : (
-        /* 无记录 */
-        <span className={`text-sm ${isToday ? "font-semibold text-primary-strong" : "text-muted"}`}>
+        <span
+          className={`text-sm ${isToday ? "font-semibold text-primary-strong" : "text-muted"}`}
+        >
           {day}
         </span>
       )}
 
-      {/* 今日指示点 */}
       {isToday && !hasRecord && (
-        <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary-strong" />
+        <span className="absolute bottom-1.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-primary-strong" />
       )}
     </motion.button>
   );
