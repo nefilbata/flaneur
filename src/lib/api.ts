@@ -106,6 +106,18 @@ export async function getRecordsByMonth(
   return ((data ?? []) as FoodRecordRow[]).map(mapRecord);
 }
 
+export async function getAllRecords(): Promise<FoodRecord[]> {
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("food_records")
+    .select("*, food_photos(*)")
+    .order("record_date", { ascending: false });
+
+  if (error) throw error;
+  return ((data ?? []) as FoodRecordRow[]).map(mapRecord);
+}
+
 export async function createRecord(data: NewFoodRecord): Promise<FoodRecord> {
   if (!supabase) {
     throw new Error("Supabase is not configured.");
