@@ -1,45 +1,63 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayCell } from "./day-cell";
+import { DayCell } from "@/components/calendar/day-cell";
 import type { FoodRecord } from "@/types/food-record";
 
 interface CalendarViewProps {
   records: FoodRecord[];
   onDayClick?: (date: string) => void;
+  onMonthChange?: (year: number, month: number) => void;
 }
 
 const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
 const MONTHS = [
-  "一月", "二月", "三月", "四月", "五月", "六月",
-  "七月", "八月", "九月", "十月", "十一月", "十二月",
+  "一月",
+  "二月",
+  "三月",
+  "四月",
+  "五月",
+  "六月",
+  "七月",
+  "八月",
+  "九月",
+  "十月",
+  "十一月",
+  "十二月",
 ];
 
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
+function getDaysInMonth(year: number, monthIndex: number) {
+  return new Date(year, monthIndex + 1, 0).getDate();
 }
 
-function getFirstDayOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
+function getFirstDayOfMonth(year: number, monthIndex: number) {
+  return new Date(year, monthIndex, 1).getDay();
 }
 
-function formatDate(year: number, month: number, day: number) {
-  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+function formatDate(year: number, monthIndex: number, day: number) {
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-export function CalendarView({ records, onDayClick }: CalendarViewProps) {
+export function CalendarView({
+  records,
+  onDayClick,
+  onMonthChange,
+}: CalendarViewProps) {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [direction, setDirection] = useState(0); // -1 = prev, 1 = next
+  const [direction, setDirection] = useState(0);
 
-  // 按日期索引记录
+  useEffect(() => {
+    onMonthChange?.(currentYear, currentMonth + 1);
+  }, [currentMonth, currentYear, onMonthChange]);
+
   const recordMap = useMemo(() => {
     const map: Record<string, FoodRecord> = {};
-    records.forEach((r) => {
-      map[r.recordDate] = r;
+    records.forEach((record) => {
+      map[record.recordDate] = record;
     });
     return map;
   }, [records]);
@@ -47,17 +65,18 @@ export function CalendarView({ records, onDayClick }: CalendarViewProps) {
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
 
-  // 构建日历格子
-  const cells: (number | null)[] = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  const cells: (number | null)[] = [
+    ...Array.from({ length: firstDay }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ];
 
-  // 本月统计
-  const monthRecords = records.filter((r) => {
-    const d = new Date(r.recordDate);
-    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+  const monthRecords = records.filter((record) => {
+    const date = new Date(`${record.recordDate}T00:00:00`);
+    return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
   });
-  const uniqueRestaurants = new Set(monthRecords.map((r) => r.restaurantName)).size;
+  const uniqueRestaurants = new Set(
+    monthRecords.map((record) => record.restaurantName)
+  ).size;
 
   const goToPrev = () => {
     setDirection(-1);
@@ -84,42 +103,41 @@ export function CalendarView({ records, onDayClick }: CalendarViewProps) {
 
   return (
     <div className="card p-6 md:p-8">
-      {/* ── 月份导航 ── */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <button
+          type="button"
           onClick={goToPrev}
-          className="w-10 h-10 rounded-full flex items-center justify-center
-                     hover:bg-soft transition-colors duration-200"
+          className="flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-soft"
+          aria-label="上个月"
         >
-          <ChevronLeft className="w-5 h-5 text-muted" />
+          <ChevronLeft className="size-5 text-muted" />
         </button>
 
         <div className="text-center">
-          <h2 className="font-serif text-2xl md:text-3xl tracking-wide text-charcoal">
+          <h2 className="font-serif text-2xl tracking-wide text-charcoal md:text-3xl">
             {MONTHS[currentMonth]}
           </h2>
-          <p className="text-sm text-muted mt-0.5">{currentYear}</p>
+          <p className="mt-0.5 text-sm text-muted">{currentYear}</p>
         </div>
 
         <button
+          type="button"
           onClick={goToNext}
-          className="w-10 h-10 rounded-full flex items-center justify-center
-                     hover:bg-soft transition-colors duration-200"
+          className="flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-soft"
+          aria-label="下个月"
         >
-          <ChevronRight className="w-5 h-5 text-muted" />
+          <ChevronRight className="size-5 text-muted" />
         </button>
       </div>
 
-      {/* ── 星期标题行 ── */}
-      <div className="grid grid-cols-7 mb-3">
-        {WEEKDAYS.map((d) => (
-          <div key={d} className="text-center text-xs text-muted font-medium py-1">
-            {d}
+      <div className="mb-3 grid grid-cols-7">
+        {WEEKDAYS.map((day) => (
+          <div key={day} className="py-1 text-center text-xs font-medium text-muted">
+            {day}
           </div>
         ))}
       </div>
 
-      {/* ── 日历网格 ── */}
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={`${currentYear}-${currentMonth}`}
@@ -129,48 +147,33 @@ export function CalendarView({ records, onDayClick }: CalendarViewProps) {
           transition={{ duration: 0.25, ease: "easeInOut" }}
           className="grid grid-cols-7 gap-2"
         >
-          {cells.map((day, i) => {
-            const dateStr = day ? formatDate(currentYear, currentMonth, day) : "";
-            const isToday =
-              isCurrentMonth && day === today.getDate();
+          {cells.map((day, index) => {
+            const date = day ? formatDate(currentYear, currentMonth, day) : "";
+            const isToday = isCurrentMonth && day === today.getDate();
+
             return (
               <DayCell
-                key={i}
+                key={`${date}-${index}`}
                 day={day}
                 isToday={isToday}
-                record={day ? recordMap[dateStr] : undefined}
-                onClick={() => day && onDayClick?.(dateStr)}
+                record={day ? recordMap[date] : undefined}
+                onClick={() => day && onDayClick?.(date)}
               />
             );
           })}
         </motion.div>
       </AnimatePresence>
 
-      {/* ── 本月统计 ── */}
-      <div className="mt-6 pt-5 border-t border-border">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted">本月记录</p>
-            <p className="text-2xl font-serif text-charcoal mt-0.5">
-              {monthRecords.length}
-              <span className="text-sm text-muted font-sans ml-1.5">次打卡</span>
-            </p>
-          </div>
-          <div className="h-10 w-px bg-border" />
-          <div>
-            <p className="text-sm text-muted">探访餐厅</p>
-            <p className="text-2xl font-serif text-charcoal mt-0.5">
-              {uniqueRestaurants}
-              <span className="text-sm text-muted font-sans ml-1.5">家</span>
-            </p>
-          </div>
-          <div className="h-10 w-px bg-border" />
+      <div className="mt-6 border-t border-border pt-5">
+        <div className="flex items-center justify-between gap-3">
+          <StatBlock label="本月记录" value={monthRecords.length} suffix="次打卡" />
+          <Divider />
+          <StatBlock label="探访餐厅" value={uniqueRestaurants} suffix="家" />
+          <Divider />
           <div>
             <p className="text-sm text-muted">最爱菜系</p>
-            <p className="text-lg font-serif text-charcoal mt-0.5">
-              {monthRecords.length > 0
-                ? getMostFrequentCuisine(monthRecords)
-                : "—"}
+            <p className="mt-0.5 font-serif text-lg text-charcoal">
+              {monthRecords.length > 0 ? getMostFrequentCuisine(monthRecords) : "暂无"}
             </p>
           </div>
         </div>
@@ -179,14 +182,37 @@ export function CalendarView({ records, onDayClick }: CalendarViewProps) {
   );
 }
 
-/* ── helper ── */
+function StatBlock({
+  label,
+  value,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  suffix: string;
+}) {
+  return (
+    <div>
+      <p className="text-sm text-muted">{label}</p>
+      <p className="mt-0.5 font-serif text-2xl text-charcoal">
+        {value}
+        <span className="ml-1.5 font-sans text-sm text-muted">{suffix}</span>
+      </p>
+    </div>
+  );
+}
+
+function Divider() {
+  return <div className="h-10 w-px bg-border" />;
+}
+
 function getMostFrequentCuisine(records: FoodRecord[]): string {
   const count: Record<string, number> = {};
-  records.forEach((r) =>
-    r.cuisineTags.forEach((t) => {
-      count[t] = (count[t] || 0) + 1;
-    })
-  );
-  const sorted = Object.entries(count).sort((a, b) => b[1] - a[1]);
-  return sorted[0]?.[0] || "—";
+  records.forEach((record) => {
+    record.cuisineTags.forEach((tag) => {
+      count[tag] = (count[tag] || 0) + 1;
+    });
+  });
+
+  return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "暂无";
 }
