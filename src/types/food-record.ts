@@ -27,6 +27,7 @@ export interface FoodRecord {
   flavor: FlavorProfile;
   tastingNotes?: string;
   costPerPerson?: number;
+  stickerUrl?: string;
   photos: FoodPhoto[];
   recordDate: string;
   createdAt: string;

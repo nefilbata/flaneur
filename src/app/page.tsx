@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Sparkles } from "lucide-react";
+import { Images, Plus, Sparkles, UsersRound } from "lucide-react";
 import { CalendarView } from "@/components/calendar/calendar-view";
 import { RecordModal } from "@/components/record-form/record-modal";
 import { RecordDetail } from "@/components/record-form/record-detail";
@@ -82,6 +83,42 @@ export default function HomePage() {
           <Sparkles className="size-5" />
         </span>
       </button>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <Link
+          href="/stickers"
+          className="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5"
+        >
+          <span className="grid size-11 place-items-center rounded-full bg-soft text-primary-strong">
+            <Images className="size-5" />
+          </span>
+          <span>
+            <span className="block font-serif text-lg text-charcoal">
+              {"\u8d34\u7eb8\u518c"}
+            </span>
+            <span className="text-xs text-muted">
+              {"\u6536\u85cf\u6bcf\u4e00\u9910\u7684\u5c0f\u56fe\u7247"}
+            </span>
+          </span>
+        </Link>
+
+        <Link
+          href="/buddy"
+          className="card flex items-center gap-4 p-4 transition hover:-translate-y-0.5"
+        >
+          <span className="grid size-11 place-items-center rounded-full bg-soft text-primary-strong">
+            <UsersRound className="size-5" />
+          </span>
+          <span>
+            <span className="block font-serif text-lg text-charcoal">
+              {"\u6f2b\u6e38\u642d\u6863"}
+            </span>
+            <span className="text-xs text-muted">
+              {"\u5373\u5c06\u4e0a\u7ebf\uff0c\u548c\u670b\u53cb\u4e00\u8d77\u8bb0\u5f55"}
+            </span>
+          </span>
+        </Link>
+      </div>
 
       <motion.button
         whileHover={{ scale: 1.05 }}
