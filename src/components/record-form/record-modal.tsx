@@ -2,9 +2,10 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Camera, MapPin, Minus, Plus, Star, X } from "lucide-react";
 import { generateSticker } from "@/lib/sticker-generator";
+import { AppModalPortal } from "@/components/ui/app-modal-portal";
 import { CUISINE_TAGS } from "@/types/food-record";
 
 interface RecordModalProps {
@@ -143,25 +144,12 @@ export function RecordModal({ isOpen, onClose, selectedDate, onSave }: RecordMod
   const displayTags = showAllTags ? CUISINE_TAGS : CUISINE_TAGS.slice(0, 12);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-charcoal/30 backdrop-blur-sm"
-            onClick={handleClose}
-          />
-
-          <motion.div
-            initial={{ y: "100%", opacity: 0.96 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0.96 }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-[60] max-h-[88vh] overflow-y-auto rounded-t-3xl bg-surface shadow-[0_-8px_40px_rgba(44,44,44,0.12)] md:bottom-auto md:left-1/2 md:right-auto md:top-28 md:max-h-[calc(100vh-9rem)] md:w-[min(680px,calc(100vw-4rem))] md:-translate-x-1/2 md:rounded-3xl md:shadow-[0_20px_70px_rgba(44,44,44,0.18)]"
-            onClick={(event) => event.stopPropagation()}
-          >
+    <AppModalPortal
+      isOpen={isOpen}
+      onClose={handleClose}
+      variant="sheet"
+      contentClassName="shadow-[0_-8px_40px_rgba(44,44,44,0.12)] md:shadow-[0_20px_70px_rgba(44,44,44,0.18)]"
+    >
             <div className="sticky top-0 z-10 rounded-t-3xl bg-surface pb-2 pt-3">
               <div className="mx-auto h-1 w-10 rounded-full bg-border" />
             </div>
@@ -372,10 +360,7 @@ export function RecordModal({ isOpen, onClose, selectedDate, onSave }: RecordMod
                 {"\u4fdd\u5b58\u8bb0\u5f55"}
               </motion.button>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+    </AppModalPortal>
   );
 }
 

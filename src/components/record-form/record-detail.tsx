@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Edit3, MapPin, Star, X } from "lucide-react";
+import { AppModalPortal } from "@/components/ui/app-modal-portal";
 import type { FlavorProfile, FoodRecord } from "@/types/food-record";
 
 interface RecordDetailProps {
@@ -34,15 +35,6 @@ export function RecordDetail({
 }: RecordDetailProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<FoodRecord | null>(record);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
 
   if (!record || !draft) return null;
 
@@ -80,25 +72,12 @@ export function RecordDetail({
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[55] bg-charcoal/30 backdrop-blur-sm"
-            onClick={onClose}
-          />
-
-          <motion.div
-            initial={{ y: 56, opacity: 0.96 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 56, opacity: 0.96 }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed inset-x-3 top-[15vh] z-[70] max-h-[80vh] overflow-y-auto rounded-3xl bg-surface shadow-[0_20px_70px_rgba(44,44,44,0.18)] md:left-1/2 md:right-auto md:w-[min(680px,calc(100vw-4rem))] md:-translate-x-1/2"
-            onClick={(event) => event.stopPropagation()}
-          >
+    <AppModalPortal
+      isOpen={isOpen}
+      onClose={onClose}
+      variant="dialog"
+      contentClassName="mt-[15dvh] max-h-[calc(85dvh-env(safe-area-inset-bottom)-1rem)] self-start"
+    >
             <div className="sticky top-0 z-10 rounded-t-3xl bg-surface/95 px-5 pb-3 pt-4 backdrop-blur">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div className="min-w-0">
@@ -220,10 +199,7 @@ export function RecordDetail({
                 </motion.button>
               )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+    </AppModalPortal>
   );
 }
 

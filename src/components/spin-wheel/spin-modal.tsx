@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { AppModalPortal } from "@/components/ui/app-modal-portal";
 import { DEMO_RECORDS } from "@/lib/demo-records";
 import type { FoodRecord } from "@/types/food-record";
 import { SpinWheel } from "@/components/spin-wheel/spin-wheel";
@@ -25,23 +26,13 @@ export function SpinModal({ isOpen, onClose }: SpinModalProps) {
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[80]">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-charcoal/45 backdrop-blur-sm"
-            onClick={handleClose}
-          />
-          <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.98 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="absolute inset-x-4 top-1/2 mx-auto max-w-md -translate-y-1/2 rounded-card border border-border bg-surface p-5 shadow-card-hover"
-          >
+    <AppModalPortal
+      isOpen={isOpen}
+      onClose={handleClose}
+      variant="dialog"
+      overlayClassName="bg-charcoal/45"
+      contentClassName="max-w-md border border-border p-5 shadow-card-hover"
+    >
             <button
               type="button"
               onClick={handleClose}
@@ -89,10 +80,7 @@ export function SpinModal({ isOpen, onClose }: SpinModalProps) {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+    </AppModalPortal>
   );
 }
 
