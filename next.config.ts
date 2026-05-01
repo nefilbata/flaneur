@@ -8,11 +8,17 @@ const nextConfig: NextConfig = {
         output: "export" as const,
         basePath: "/flaneur",
         assetPrefix: "/flaneur/",
-        images: {
-          unoptimized: true,
-        },
       }
     : {}),
+  images: {
+    unoptimized: isGithubPages,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
   turbopack: {
     root: process.cwd(),
   },

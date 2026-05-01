@@ -1,4 +1,4 @@
-# Flaneur
+# Fl&acirc;neur
 
 Personal food exploration journal for wandering a city through taste.
 

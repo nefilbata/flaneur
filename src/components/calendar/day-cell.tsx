@@ -37,7 +37,7 @@ export function DayCell({ day, isToday, record, onClick }: DayCellProps) {
         <>
           <Image
             src={cover.url}
-            alt={record?.dishName ?? "美食记录"}
+            alt={record?.dishName ?? "\u7f8e\u98df\u8bb0\u5f55"}
             fill
             sizes="80px"
             className="object-cover"

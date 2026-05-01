@@ -32,7 +32,7 @@ export const ACHIEVEMENT_DEFS: AchievementDef[] = [
     emoji: "🏙️",
     condition: "探索 5 个不同区域",
     description: "用脚步丈量美食版图",
-    check: (records) => getDistinctAreas(records).size >= 3,
+    check: (records) => getDistinctAreas(records).size >= 5,
   },
   {
     key: "map_explorer",

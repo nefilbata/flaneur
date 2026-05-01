@@ -28,6 +28,22 @@
   --color-paper-grain: rgba(44, 44, 44, 0.04);
 }
 
+html.dark {
+  --color-background: #1a1816;
+  --color-surface: #242220;
+  --color-soft: #2e2b28;
+  --color-primary: #c9a9a6;
+  --color-primary-strong: #d4b0ad;
+  --color-secondary: #9aa8bb;
+  --color-charcoal: #e8e0d8;
+  --color-muted: #9a9088;
+  --color-border: #3a3634;
+  --color-success: #9aaf94;
+  --color-warning: #deb66d;
+  --color-foreground: #e8e0d8;
+  --color-paper-grain: rgba(255, 255, 255, 0.03);
+}
+
 /* ── Base resets ── */
 * {
   box-sizing: border-box;

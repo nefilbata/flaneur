@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Franklin, Playfair_Display } from "next/font/google";
 import { SiteNav } from "@/components/ui/site-nav";
+import { WelcomeOverlay } from "@/components/welcome/welcome-overlay";
 import "../styles/globals.css";
 
 const playfair = Playfair_Display({
@@ -18,7 +19,7 @@ const libre = Libre_Franklin({
 });
 
 export const metadata: Metadata = {
-  title: "Flaneur",
+  title: "Fl\u00e2neur",
   description: "A personal food exploration journal.",
 };
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         <main className="min-h-[calc(100vh-4rem)] px-4 py-6 md:px-8 lg:px-16">
           {children}
         </main>
+        <WelcomeOverlay />
       </body>
     </html>
   );

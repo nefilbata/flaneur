@@ -3,13 +3,13 @@ import type { FoodRecord } from "@/types/food-record";
 export const DEMO_RECORDS: FoodRecord[] = [
   {
     id: "1",
-    dishName: "麻辣火锅",
-    restaurantName: "海底捞",
-    restaurantAddress: "锦绣路 88 号",
-    cuisineTags: ["火锅", "川菜"],
+    dishName: "\u9ebb\u8fa3\u706b\u9505",
+    restaurantName: "\u6d77\u5e95\u635e",
+    restaurantAddress: "\u9526\u7ee3\u8def 88 \u53f7",
+    cuisineTags: ["\u706b\u9505", "\u5ddd\u83dc"],
     overallRating: 4,
     flavor: { umami: 4, spicy: 5, sweet: 1, aromatic: 3, sour: 1, rich: 4 },
-    tastingNotes: "牛油锅底足够香，毛肚七上八下刚刚好。",
+    tastingNotes: "\u725b\u6cb9\u9505\u5e95\u8db3\u591f\u9999\uff0c\u6bdb\u809a\u4e03\u4e0a\u516b\u4e0b\u521a\u521a\u597d\u3002",
     photos: [
       {
         id: "p1",
@@ -22,13 +22,13 @@ export const DEMO_RECORDS: FoodRecord[] = [
   },
   {
     id: "2",
-    dishName: "握寿司拼盘",
-    restaurantName: "鲔 · 初心",
-    restaurantAddress: "梧桐街 12 号",
-    cuisineTags: ["日料", "海鲜"],
+    dishName: "\u63e1\u5bff\u53f8\u62fc\u76d8",
+    restaurantName: "\u9c94 · \u521d\u5fc3",
+    restaurantAddress: "\u68a7\u6850\u8857 12 \u53f7",
+    cuisineTags: ["\u65e5\u6599", "\u6d77\u9c9c"],
     overallRating: 5,
     flavor: { umami: 5, spicy: 0, sweet: 2, aromatic: 3, sour: 1, rich: 3 },
-    tastingNotes: "中腹入口即化，赤身的铁味恰到好处。",
+    tastingNotes: "\u4e2d\u8179\u5165\u53e3\u5373\u5316\uff0c\u8d64\u8eab\u7684\u94c1\u5473\u6070\u5230\u597d\u5904\u3002",
     photos: [
       {
         id: "p2",
@@ -41,13 +41,13 @@ export const DEMO_RECORDS: FoodRecord[] = [
   },
   {
     id: "3",
-    dishName: "蛋黄酥",
-    restaurantName: "鲍师傅",
-    restaurantAddress: "锦绣路 102 号",
-    cuisineTags: ["甜品", "小吃"],
+    dishName: "\u86cb\u9ec4\u9165",
+    restaurantName: "\u9c8d\u5e08\u5085",
+    restaurantAddress: "\u9526\u7ee3\u8def 102 \u53f7",
+    cuisineTags: ["\u751c\u54c1", "\u5c0f\u5403"],
     overallRating: 4,
     flavor: { umami: 2, spicy: 0, sweet: 4, aromatic: 3, sour: 0, rich: 4 },
-    tastingNotes: "外酥内软，蛋黄流心。",
+    tastingNotes: "\u5916\u9165\u5185\u8f6f\uff0c\u86cb\u9ec4\u6d41\u5fc3\u3002",
     photos: [
       {
         id: "p3",
@@ -60,13 +60,13 @@ export const DEMO_RECORDS: FoodRecord[] = [
   },
   {
     id: "4",
-    dishName: "酸汤肥牛",
-    restaurantName: "外婆家",
-    restaurantAddress: "人民路 9 号",
-    cuisineTags: ["川菜"],
+    dishName: "\u9178\u6c64\u80a5\u725b",
+    restaurantName: "\u5916\u5a46\u5bb6",
+    restaurantAddress: "\u4eba\u6c11\u8def 9 \u53f7",
+    cuisineTags: ["\u5ddd\u83dc"],
     overallRating: 4,
     flavor: { umami: 3, spicy: 3, sweet: 1, aromatic: 2, sour: 4, rich: 3 },
-    tastingNotes: "酸汤底很开胃，肥牛嫩滑。",
+    tastingNotes: "\u9178\u6c64\u5e95\u5f88\u5f00\u80c3\uff0c\u80a5\u725b\u5ae9\u6ed1\u3002",
     photos: [
       {
         id: "p4",
@@ -79,13 +79,13 @@ export const DEMO_RECORDS: FoodRecord[] = [
   },
   {
     id: "5",
-    dishName: "提拉米苏",
+    dishName: "\u63d0\u62c9\u7c73\u82cf",
     restaurantName: "Cafe Luna",
-    restaurantAddress: "梧桐街 18 号",
-    cuisineTags: ["甜品", "意餐"],
+    restaurantAddress: "\u68a7\u6850\u8857 18 \u53f7",
+    cuisineTags: ["\u751c\u54c1", "\u610f\u9910"],
     overallRating: 5,
     flavor: { umami: 1, spicy: 0, sweet: 4, aromatic: 4, sour: 0, rich: 5 },
-    tastingNotes: "咖啡味浓郁，马斯卡彭细腻密实。",
+    tastingNotes: "\u5496\u5561\u5473\u6d53\u90c1\uff0c\u9a6c\u65af\u5361\u5f6d\u7ec6\u817b\u5bc6\u5b9e\u3002",
     photos: [
       {
         id: "p5",
@@ -98,13 +98,13 @@ export const DEMO_RECORDS: FoodRecord[] = [
   },
   {
     id: "6",
-    dishName: "烤羊排",
-    restaurantName: "西贝莜面村",
-    restaurantAddress: "锦绣路 120 号",
-    cuisineTags: ["烧烤", "新疆菜"],
+    dishName: "\u70e4\u7f8a\u6392",
+    restaurantName: "\u897f\u8d1d\u83b8\u9762\u6751",
+    restaurantAddress: "\u9526\u7ee3\u8def 120 \u53f7",
+    cuisineTags: ["\u70e7\u70e4", "\u65b0\u7586\u83dc"],
     overallRating: 4,
     flavor: { umami: 3, spicy: 2, sweet: 1, aromatic: 5, sour: 0, rich: 4 },
-    tastingNotes: "孜然味十足，外焦里嫩。",
+    tastingNotes: "\u5b5c\u7136\u5473\u5341\u8db3\uff0c\u5916\u7126\u91cc\u5ae9\u3002",
     photos: [
       {
         id: "p6",

@@ -5,17 +5,18 @@ import {
   PolarGrid,
   Radar,
   RadarChart,
+  ResponsiveContainer,
 } from "recharts";
 import { DEMO_RECORDS } from "@/lib/demo-records";
 import { FLAVOR_TITLES, type FlavorProfile, type FoodRecord } from "@/types/food-record";
 
 const FLAVOR_AXES: { key: keyof FlavorProfile; label: string }[] = [
-  { key: "umami", label: "鲜" },
-  { key: "spicy", label: "辣" },
-  { key: "sweet", label: "甜" },
-  { key: "aromatic", label: "香" },
-  { key: "sour", label: "酸" },
-  { key: "rich", label: "浓" },
+  { key: "umami", label: "\u9c9c" },
+  { key: "spicy", label: "\u8fa3" },
+  { key: "sweet", label: "\u751c" },
+  { key: "aromatic", label: "\u9999" },
+  { key: "sour", label: "\u9178" },
+  { key: "rich", label: "\u6d53" },
 ];
 
 export default function FlavorPage() {
@@ -23,7 +24,7 @@ export default function FlavorPage() {
   const averages = getFlavorAverages(records);
   const title =
     FLAVOR_TITLES.find((item) => item.condition(averages))?.name ??
-    "全能味蕾 · 杂食行者";
+    "\u5168\u80fd\u5473\u857e";
   const data = FLAVOR_AXES.map((axis) => ({
     axis: axis.label,
     value: Number(averages[axis.key].toFixed(2)),
@@ -35,13 +36,15 @@ export default function FlavorPage() {
       <header className="mb-8 text-center">
         <p className="text-sm uppercase tracking-widest text-muted">Flavor Archive</p>
         <h1 className="mt-2 font-serif text-4xl text-charcoal">{title}</h1>
-        <p className="mt-2 text-sm text-muted">你的味觉人格画像</p>
+        <p className="mt-2 text-sm text-muted">
+          {"\u4f60\u7684\u5473\u89c9\u4eba\u683c\u753b\u50cf"}
+        </p>
       </header>
 
       <div className="card h-80 overflow-hidden p-4">
         {records.length > 0 ? (
-          <div className="flex size-full justify-center">
-            <RadarChart width={360} height={290} data={data} outerRadius="72%">
+          <ResponsiveContainer width="100%" height={280}>
+            <RadarChart data={data} outerRadius="72%">
               <PolarGrid stroke="var(--color-border)" />
               <PolarAngleAxis
                 dataKey="axis"
@@ -56,7 +59,7 @@ export default function FlavorPage() {
                 isAnimationActive
               />
             </RadarChart>
-          </div>
+          </ResponsiveContainer>
         ) : (
           <div className="grid size-full place-items-center text-center">
             <div className="relative size-48">
@@ -64,7 +67,7 @@ export default function FlavorPage() {
               <div className="absolute inset-6 clip-hexagon border border-dashed border-muted/30" />
               <div className="absolute inset-12 clip-hexagon border border-dashed border-muted/20" />
               <p className="absolute inset-x-0 bottom-0 text-sm text-muted">
-                记录更多美食，解锁你的味觉人格
+                {"\u8bb0\u5f55\u66f4\u591a\u7f8e\u98df\uff0c\u89e3\u9501\u4f60\u7684\u5473\u89c9\u4eba\u683c"}
               </p>
             </div>
           </div>
@@ -72,14 +75,14 @@ export default function FlavorPage() {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <StatCard label="总记录" value={`${records.length} 条`} />
-        <StatCard label="涉及菜系" value={`${stats.cuisineCount} 种`} />
-        <StatCard label="常去餐厅" value={stats.favoriteRestaurant} />
-        <StatCard label="最高评分" value={stats.topDish} />
+        <StatCard label={"\u603b\u8bb0\u5f55"} value={`${records.length} \u6761`} />
+        <StatCard label={"\u6d89\u53ca\u83dc\u7cfb"} value={`${stats.cuisineCount} \u79cd`} />
+        <StatCard label={"\u5e38\u53bb\u9910\u5385"} value={stats.favoriteRestaurant} />
+        <StatCard label={"\u6700\u9ad8\u8bc4\u5206"} value={stats.topDish} />
         <div className="card col-span-2 p-5 text-center">
-          <p className="text-sm text-muted">平均消费</p>
+          <p className="text-sm text-muted">{"\u5e73\u5747\u6d88\u8d39"}</p>
           <p className="mt-1 font-serif text-3xl text-charcoal">
-            {stats.averageCost ? `¥${stats.averageCost}` : "暂无"}
+            {stats.averageCost ? `\u00a5${stats.averageCost}` : "\u6682\u65e0"}
           </p>
         </div>
       </div>
@@ -126,11 +129,11 @@ function getFlavorAverages(records: FoodRecord[]): FlavorProfile {
 function getStats(records: FoodRecord[]) {
   const cuisines = new Set(records.flatMap((record) => record.cuisineTags));
   const favoriteRestaurant =
-    getMostFrequent(records.map((record) => record.restaurantName)) ?? "暂无";
+    getMostFrequent(records.map((record) => record.restaurantName)) ?? "\u6682\u65e0";
   const topDish =
     [...records].sort(
       (a, b) => (b.overallRating ?? 0) - (a.overallRating ?? 0)
-    )[0]?.dishName ?? "暂无";
+    )[0]?.dishName ?? "\u6682\u65e0";
   const costs = records
     .map((record) => record.costPerPerson)
     .filter((cost): cost is number => typeof cost === "number");

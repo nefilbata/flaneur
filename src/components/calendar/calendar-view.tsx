@@ -12,20 +12,28 @@ interface CalendarViewProps {
   onMonthChange?: (year: number, month: number) => void;
 }
 
-const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
+const WEEKDAYS = [
+  "\u65e5",
+  "\u4e00",
+  "\u4e8c",
+  "\u4e09",
+  "\u56db",
+  "\u4e94",
+  "\u516d",
+];
 const MONTHS = [
-  "一月",
-  "二月",
-  "三月",
-  "四月",
-  "五月",
-  "六月",
-  "七月",
-  "八月",
-  "九月",
-  "十月",
-  "十一月",
-  "十二月",
+  "\u4e00\u6708",
+  "\u4e8c\u6708",
+  "\u4e09\u6708",
+  "\u56db\u6708",
+  "\u4e94\u6708",
+  "\u516d\u6708",
+  "\u4e03\u6708",
+  "\u516b\u6708",
+  "\u4e5d\u6708",
+  "\u5341\u6708",
+  "\u5341\u4e00\u6708",
+  "\u5341\u4e8c\u6708",
 ];
 
 function getDaysInMonth(year: number, monthIndex: number) {
@@ -108,7 +116,7 @@ export function CalendarView({
           type="button"
           onClick={goToPrev}
           className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
-          aria-label="上个月"
+          aria-label="Previous month"
         >
           <ChevronLeft className="size-5" />
         </button>
@@ -124,7 +132,7 @@ export function CalendarView({
           type="button"
           onClick={goToNext}
           className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
-          aria-label="下个月"
+          aria-label="Next month"
         >
           <ChevronRight className="size-5" />
         </button>
@@ -166,12 +174,12 @@ export function CalendarView({
 
       <div className="mt-6 border-t border-border pt-5">
         <div className="grid grid-cols-3 gap-3">
-          <StatBlock label="本月记录" value={monthRecords.length} suffix="次" />
-          <StatBlock label="探访餐厅" value={uniqueRestaurants} suffix="家" />
+          <StatBlock label={"\u672c\u6708\u8bb0\u5f55"} value={monthRecords.length} suffix={"\u6b21"} />
+          <StatBlock label={"\u63a2\u8bbf\u9910\u5385"} value={uniqueRestaurants} suffix={"\u5bb6"} />
           <div>
-            <p className="text-xs text-muted sm:text-sm">最爱菜系</p>
+            <p className="text-xs text-muted sm:text-sm">{"\u6700\u7231\u83dc\u7cfb"}</p>
             <p className="mt-0.5 font-serif text-lg text-charcoal">
-              {monthRecords.length > 0 ? getMostFrequentCuisine(monthRecords) : "暂无"}
+              {monthRecords.length > 0 ? getMostFrequentCuisine(monthRecords) : "\u6682\u65e0"}
             </p>
           </div>
         </div>
@@ -208,5 +216,5 @@ function getMostFrequentCuisine(records: FoodRecord[]): string {
     });
   });
 
-  return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "暂无";
+  return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "\u6682\u65e0";
 }
