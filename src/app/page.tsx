@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Images, Plus, Sparkles, UsersRound } from "lucide-react";
 import { CalendarView } from "@/components/calendar/calendar-view";
-import { RecordModal } from "@/components/record-form/record-modal";
+import { RecordModal, type RecordFormData } from "@/components/record-form/record-modal";
 import { RecordDetail } from "@/components/record-form/record-detail";
 import { SpinModal } from "@/components/spin-wheel/spin-modal";
 import { getDailyQuote } from "@/lib/daily-quotes";
@@ -13,7 +13,7 @@ import { DEMO_RECORDS } from "@/lib/demo-records";
 import type { FoodRecord } from "@/types/food-record";
 
 export default function HomePage() {
-  const [records] = useState<FoodRecord[]>(DEMO_RECORDS);
+  const [records, setRecords] = useState<FoodRecord[]>(DEMO_RECORDS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSpinOpen, setIsSpinOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
@@ -34,8 +34,43 @@ export default function HomePage() {
     }
   };
 
+  const handleCreateRecord = (data: RecordFormData) => {
+    const newRecord: FoodRecord = {
+      id: `local-${Date.now()}`,
+      dishName: data.dishName,
+      restaurantName: data.restaurantName,
+      restaurantAddress: data.restaurantAddress,
+      cuisineTags: data.cuisineTags,
+      overallRating: data.overallRating || undefined,
+      flavor: data.flavor,
+      tastingNotes: data.tastingNotes,
+      costPerPerson: data.costPerPerson ? Number(data.costPerPerson) : undefined,
+      stickerUrl: data.stickerUrl,
+      photos: data.photos.map((file, index) => ({
+        id: `local-photo-${Date.now()}-${index}`,
+        url: URL.createObjectURL(file),
+        isCover: index === 0,
+        sortOrder: index,
+      })),
+      recordDate: data.recordDate,
+      createdAt: new Date().toISOString(),
+    };
+
+    setRecords((current) => [
+      newRecord,
+      ...current.filter((record) => record.recordDate !== newRecord.recordDate),
+    ]);
+  };
+
+  const handleUpdateRecord = (updated: FoodRecord) => {
+    setRecords((current) =>
+      current.map((record) => (record.id === updated.id ? updated : record))
+    );
+    setDetailRecord(updated);
+  };
+
   return (
-    <div className="mx-auto max-w-lg animate-fade-in-up">
+    <div className="mx-auto max-w-lg animate-fade-in-up pb-28 sm:pb-24">
       <div className="mb-5 text-center sm:mb-8">
         <h1 className="font-serif text-3xl tracking-wide text-charcoal sm:text-4xl md:text-5xl">
           Fl{"\u00e2"}neur
@@ -126,27 +161,27 @@ export default function HomePage() {
           setSelectedDate(new Date().toISOString().split("T")[0]);
           setIsModalOpen(true);
         }}
-        className="fixed bottom-20 right-4 z-30 flex size-12 items-center justify-center rounded-full bg-primary-strong text-surface shadow-lg transition-shadow duration-200 hover:shadow-xl sm:bottom-24 sm:right-5 sm:size-14 md:bottom-8 md:right-8"
+        className="fixed bottom-[calc(3.4rem+16px+env(safe-area-inset-bottom))] right-5 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-surface shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-shadow duration-200 hover:shadow-[0_4px_14px_rgba(0,0,0,0.18)] md:bottom-8 md:right-8"
         aria-label="Add record"
       >
-        <Plus className="size-6" />
+        <Plus className="size-5" strokeWidth={2} />
       </motion.button>
 
       <RecordModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectedDate={selectedDate}
-        onSave={(data) => {
-          console.log("New record:", data);
-        }}
+        onSave={handleCreateRecord}
       />
 
       <RecordDetail
+        key={detailRecord?.id ?? "record-detail"}
         isOpen={isDetailOpen}
         onClose={() => {
           setIsDetailOpen(false);
           setDetailRecord(null);
         }}
+        onSave={handleUpdateRecord}
         record={detailRecord}
       />
 

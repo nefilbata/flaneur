@@ -59,14 +59,14 @@ export default function StickersPage() {
       </header>
 
       {stickers.length > 0 ? (
-        <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2 sm:gap-y-9 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {stickers.map((item, index) => (
             <article key={item.record.id} className="text-center">
               <div
                 className="mx-auto w-fit rounded-[24px] bg-surface p-1 shadow-[0_12px_30px_rgba(44,44,44,0.12)] transition duration-300 hover:scale-105 hover:rotate-0 sm:rounded-[30px]"
                 style={getStickerStyle(index)}
               >
-                <div className="relative aspect-square w-[min(280px,75vw)] overflow-hidden rounded-[22px] sm:size-[210px] sm:rounded-3xl">
+                <div className="relative aspect-square w-[min(240px,65vw)] overflow-hidden rounded-[22px] sm:size-[210px] sm:rounded-3xl">
                   <Image
                     src={item.url}
                     alt={item.record.dishName}
@@ -76,7 +76,7 @@ export default function StickersPage() {
                   />
                 </div>
               </div>
-              <p className="mt-3 font-serif text-base text-charcoal sm:mt-4 sm:text-lg">
+              <p className="mt-2.5 font-serif text-sm text-charcoal">
                 {item.record.dishName}
               </p>
               <p className="text-xs text-muted">{item.record.recordDate}</p>

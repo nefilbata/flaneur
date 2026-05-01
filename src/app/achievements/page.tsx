@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { ScratchCard } from "@/components/scratch-card/scratch-card";
 import { ACHIEVEMENT_DEFS, checkAchievements } from "@/lib/achievements";
@@ -37,6 +37,15 @@ export default function AchievementsPage() {
   const activeAchievement = ACHIEVEMENT_DEFS.find(
     (achievement) => achievement.key === activeKey
   );
+
+  useEffect(() => {
+    if (!activeAchievement) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [activeAchievement]);
 
   const markScratched = (key: string) => {
     setStates((current) =>
@@ -128,12 +137,12 @@ export default function AchievementsPage() {
       </div>
 
       {activeAchievement && (
-        <div className="fixed inset-0 z-[70] grid place-items-center bg-charcoal/40 p-5 backdrop-blur-sm">
-          <div className="relative w-full max-w-[calc(100vw-40px)] rounded-card bg-surface p-4 shadow-card-hover sm:max-w-sm sm:p-5">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-charcoal/40 p-5 backdrop-blur-sm">
+          <div className="relative w-[min(340px,85vw)] rounded-card bg-surface p-5 shadow-card-hover">
             <button
               type="button"
               onClick={() => setActiveKey(null)}
-              className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-soft text-muted transition hover:bg-border sm:size-10"
+              className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-soft text-muted transition hover:bg-border"
               aria-label="关闭刮卡"
             >
               <X className="size-4" />
