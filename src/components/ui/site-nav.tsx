@@ -62,7 +62,7 @@ function NavLink({
         className={[
           "flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[11px] transition",
           isActive
-            ? "bg-primary text-white shadow-sm"
+            ? "bg-primary-strong text-surface shadow-sm"
             : "text-muted hover:bg-soft hover:text-charcoal",
         ].join(" ")}
       >
@@ -78,7 +78,7 @@ function NavLink({
       className={[
         "flex h-10 items-center gap-2 rounded-full px-4 text-sm transition",
         isActive
-          ? "bg-primary text-white shadow-sm"
+          ? "bg-primary-strong text-surface shadow-sm"
           : "text-muted hover:bg-soft hover:text-charcoal",
       ].join(" ")}
     >

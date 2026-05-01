@@ -109,7 +109,7 @@ export const FLAVOR_TITLES: FlavorTitle[] = [
     condition: (f) => f.sweet >= 3.5 && f.aromatic >= 3.5,
   },
   {
-    name: "酸辣狂人 · 味觉冒险家",
+    name: "酸辣派 · 味觉冒险家",
     condition: (f) => f.sour >= 3.5 && f.spicy >= 3.5,
   },
   {

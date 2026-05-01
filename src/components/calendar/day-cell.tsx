@@ -13,7 +13,7 @@ interface DayCellProps {
 
 export function DayCell({ day, isToday, record, onClick }: DayCellProps) {
   if (day === null) {
-    return <div className="aspect-square" />;
+    return <div className="min-h-11 aspect-square" />;
   }
 
   const hasRecord = Boolean(record);
@@ -22,11 +22,11 @@ export function DayCell({ day, isToday, record, onClick }: DayCellProps) {
   return (
     <motion.button
       type="button"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
       className={[
-        "relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-2xl transition-all duration-200",
+        "relative flex min-h-11 aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-2xl transition-all duration-200",
         isToday ? "ring-2 ring-primary-strong ring-offset-2 ring-offset-background" : "",
         hasRecord
           ? "shadow-md hover:shadow-lg"
@@ -43,14 +43,14 @@ export function DayCell({ day, isToday, record, onClick }: DayCellProps) {
             className="object-cover"
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-medium text-white drop-shadow-sm">
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/45 via-transparent to-transparent" />
+          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs font-medium text-surface drop-shadow-sm">
             {day}
           </span>
         </>
       ) : hasRecord ? (
         <div className="flex size-full flex-col items-center justify-center gap-0.5 bg-primary/15">
-          <span className="text-lg">🍜</span>
+          <span className="text-lg">🍣</span>
           <span className="text-xs text-muted">{day}</span>
         </div>
       ) : (

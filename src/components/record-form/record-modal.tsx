@@ -1,16 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, MapPin, Minus, Plus, Star, X } from "lucide-react";
-import { CUISINE_TAGS, type FlavorProfile } from "@/types/food-record";
+import { CUISINE_TAGS } from "@/types/food-record";
 
 interface RecordModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedDate: string;
-  onSave?: (data: RecordFormData) => void | Promise<void>;
+  onSave?: (data: RecordFormData) => void;
 }
 
 export interface RecordFormData {
@@ -19,37 +19,32 @@ export interface RecordFormData {
   restaurantAddress: string;
   cuisineTags: string[];
   overallRating: number;
-  flavor: FlavorProfile;
+  flavor: {
+    umami: number;
+    spicy: number;
+    sweet: number;
+    aromatic: number;
+    sour: number;
+    rich: number;
+  };
   tastingNotes: string;
   costPerPerson: string;
   recordDate: string;
   photos: File[];
 }
 
-const FLAVOR_LABELS: { key: keyof FlavorProfile; label: string; emoji: string }[] = [
-  { key: "umami", label: "鲜", emoji: "🍄" },
+const FLAVOR_LABELS = [
+  { key: "umami", label: "鲜", emoji: "🍣" },
   { key: "spicy", label: "辣", emoji: "🌶️" },
-  { key: "sweet", label: "甜", emoji: "🍯" },
+  { key: "sweet", label: "甜", emoji: "🍰" },
   { key: "aromatic", label: "香", emoji: "🌿" },
   { key: "sour", label: "酸", emoji: "🍋" },
-  { key: "rich", label: "浓", emoji: "🧈" },
-];
+  { key: "rich", label: "浓", emoji: "🥘" },
+] as const;
 
-const emptyFlavor: FlavorProfile = {
-  umami: 0,
-  spicy: 0,
-  sweet: 0,
-  aromatic: 0,
-  sour: 0,
-  rich: 0,
-};
+type FlavorKey = (typeof FLAVOR_LABELS)[number]["key"];
 
-export function RecordModal({
-  isOpen,
-  onClose,
-  selectedDate,
-  onSave,
-}: RecordModalProps) {
+export function RecordModal({ isOpen, onClose, selectedDate, onSave }: RecordModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [dishName, setDishName] = useState("");
@@ -57,41 +52,17 @@ export function RecordModal({
   const [restaurantAddress, setRestaurantAddress] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
-  const [flavor, setFlavor] = useState<FlavorProfile>(emptyFlavor);
+  const [flavor, setFlavor] = useState({
+    umami: 0,
+    spicy: 0,
+    sweet: 0,
+    aromatic: 0,
+    sour: 0,
+    rich: 0,
+  });
   const [tastingNotes, setTastingNotes] = useState("");
   const [costPerPerson, setCostPerPerson] = useState("");
   const [showAllTags, setShowAllTags] = useState(false);
-
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    const nextPhotos = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    setPhotos((current) => [...current, ...nextPhotos]);
-  };
-
-  const removePhoto = (index: number) => {
-    setPhotos((current) => {
-      URL.revokeObjectURL(current[index].preview);
-      return current.filter((_, currentIndex) => currentIndex !== index);
-    });
-  };
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags((current) =>
-      current.includes(tag)
-        ? current.filter((currentTag) => currentTag !== tag)
-        : [...current, tag]
-    );
-  };
-
-  const updateFlavor = (key: keyof FlavorProfile, delta: number) => {
-    setFlavor((current) => ({
-      ...current,
-      [key]: Math.max(0, Math.min(5, current[key] + delta)),
-    }));
-  };
 
   const resetForm = () => {
     photos.forEach((photo) => URL.revokeObjectURL(photo.preview));
@@ -101,16 +72,49 @@ export function RecordModal({
     setRestaurantAddress("");
     setSelectedTags([]);
     setRating(0);
-    setFlavor(emptyFlavor);
+    setFlavor({ umami: 0, spicy: 0, sweet: 0, aromatic: 0, sour: 0, rich: 0 });
     setTastingNotes("");
     setCostPerPerson("");
     setShowAllTags(false);
   };
 
-  const handleSave = async () => {
-    if (!dishName.trim() || !restaurantName.trim()) return;
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
-    await onSave?.({
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    const newPhotos = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setPhotos((current) => [...current, ...newPhotos]);
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos((current) => {
+      URL.revokeObjectURL(current[index].preview);
+      return current.filter((_, photoIndex) => photoIndex !== index);
+    });
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((current) =>
+      current.includes(tag) ? current.filter((item) => item !== tag) : [...current, tag]
+    );
+  };
+
+  const updateFlavor = (key: FlavorKey, delta: number) => {
+    setFlavor((current) => ({
+      ...current,
+      [key]: Math.max(0, Math.min(5, current[key] + delta)),
+    }));
+  };
+
+  const handleSave = () => {
+    if (!dishName.trim() || !restaurantName.trim()) return;
+    onSave?.({
       dishName,
       restaurantName,
       restaurantAddress,
@@ -122,7 +126,6 @@ export function RecordModal({
       recordDate: selectedDate,
       photos: photos.map((photo) => photo.file),
     });
-
     resetForm();
     onClose();
   };
@@ -137,31 +140,35 @@ export function RecordModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+            className="fixed inset-0 z-[55] bg-charcoal/30 backdrop-blur-sm"
+            onClick={handleClose}
           />
 
           <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
+            initial={{ y: "100%", opacity: 0.96 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0.96 }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto rounded-t-3xl bg-surface shadow-[0_-8px_40px_rgba(44,44,44,0.12)]"
+            className="fixed inset-x-0 bottom-0 z-[60] max-h-[88vh] overflow-y-auto rounded-t-3xl bg-surface shadow-[0_-8px_40px_rgba(44,44,44,0.12)] md:bottom-auto md:left-1/2 md:right-auto md:top-28 md:max-h-[calc(100vh-9rem)] md:w-[min(680px,calc(100vw-4rem))] md:-translate-x-1/2 md:rounded-3xl md:shadow-[0_20px_70px_rgba(44,44,44,0.18)]"
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="sticky top-0 z-10 rounded-t-3xl bg-surface pb-2 pt-3">
               <div className="mx-auto h-1 w-10 rounded-full bg-border" />
             </div>
 
-            <div className="px-6 pb-8">
+            <div className="px-6 pb-8 md:px-8">
               <div className="mb-6 flex items-center justify-between">
-                <h3 className="font-serif text-xl text-charcoal">记录美食</h3>
+                <div>
+                  <h3 className="font-serif text-xl text-charcoal">记录美食</h3>
+                  <p className="mt-0.5 text-xs text-muted">{selectedDate}</p>
+                </div>
                 <button
                   type="button"
-                  onClick={onClose}
-                  className="flex size-8 items-center justify-center rounded-full bg-soft transition-colors hover:bg-border"
-                  aria-label="关闭"
+                  onClick={handleClose}
+                  className="ml-4 flex size-10 shrink-0 items-center justify-center rounded-full bg-soft transition-colors hover:bg-border"
+                  aria-label="关闭表单"
                 >
-                  <X className="size-4 text-muted" />
+                  <X className="size-5 text-muted" />
                 </button>
               </div>
 
@@ -170,26 +177,25 @@ export function RecordModal({
                   {photos.map((photo, index) => (
                     <div
                       key={photo.preview}
-                      className="relative size-24 shrink-0 overflow-hidden rounded-2xl"
+                      className="relative size-24 flex-shrink-0 overflow-hidden rounded-2xl"
                     >
                       <Image
                         src={photo.preview}
-                        alt="上传预览"
+                        alt=""
                         fill
-                        sizes="96px"
                         className="object-cover"
                         unoptimized
                       />
                       <button
                         type="button"
                         onClick={() => removePhoto(index)}
-                        className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-black/50"
+                        className="absolute right-1 top-1 flex size-6 items-center justify-center rounded-full bg-charcoal/55"
                         aria-label="移除照片"
                       >
-                        <X className="size-3 text-white" />
+                        <X className="size-3 text-surface" />
                       </button>
                       {index === 0 && (
-                        <span className="absolute bottom-1 left-1 rounded-full bg-primary/90 px-1.5 py-0.5 text-[10px] text-white">
+                        <span className="absolute bottom-1 left-1 rounded-full bg-primary-strong px-1.5 py-0.5 text-[10px] text-surface">
                           封面
                         </span>
                       )}
@@ -198,7 +204,7 @@ export function RecordModal({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex size-24 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-border transition-colors hover:border-primary/50"
+                    className="flex size-24 flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-border transition-colors hover:border-primary/50"
                   >
                     <Camera className="size-5 text-muted" />
                     <span className="text-[11px] text-muted">添加照片</span>
@@ -214,26 +220,24 @@ export function RecordModal({
                 />
               </div>
 
-              <TextInput
+              <TextField
                 label="菜品名称 *"
                 value={dishName}
                 onChange={setDishName}
                 placeholder="今天吃了什么？"
               />
-
-              <TextInput
+              <TextField
                 label="餐厅名称 *"
                 value={restaurantName}
                 onChange={setRestaurantName}
                 placeholder="在哪家店吃的？"
                 icon={<MapPin className="mr-1 inline-block size-3.5 -translate-y-0.5" />}
               />
-
-              <TextInput
+              <TextField
                 label="餐厅地址"
                 value={restaurantAddress}
                 onChange={setRestaurantAddress}
-                placeholder="地址（选填）"
+                placeholder="地址，选填"
               />
 
               <div className="mb-5">
@@ -246,7 +250,7 @@ export function RecordModal({
                       onClick={() => toggleTag(tag)}
                       className={`rounded-full px-3 py-1.5 text-sm transition-all duration-200 ${
                         selectedTags.includes(tag)
-                          ? "bg-primary text-white shadow-sm"
+                          ? "bg-primary-strong text-surface shadow-sm"
                           : "bg-soft text-muted hover:bg-border"
                       }`}
                     >
@@ -270,8 +274,10 @@ export function RecordModal({
                     <motion.button
                       key={star}
                       type="button"
-                      whileTap={{ scale: 1.3 }}
+                      whileTap={{ scale: 1.18 }}
                       onClick={() => setRating(star === rating ? 0 : star)}
+                      className="min-h-11 min-w-11 transition-colors"
+                      aria-label={`${star} 星`}
                     >
                       <Star
                         className={`size-7 transition-colors duration-200 ${
@@ -287,22 +293,32 @@ export function RecordModal({
 
               <div className="mb-5">
                 <label className="mb-3 block text-sm text-muted">风味评分</label>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {FLAVOR_LABELS.map(({ key, label, emoji }) => (
                     <div key={key} className="flex items-center justify-between">
                       <span className="text-sm">
                         {emoji} {label}
                       </span>
                       <div className="flex items-center gap-2">
-                        <FlavorButton onClick={() => updateFlavor(key, -1)}>
+                        <button
+                          type="button"
+                          onClick={() => updateFlavor(key, -1)}
+                          className="flex size-8 items-center justify-center rounded-full bg-soft transition-colors hover:bg-border"
+                          aria-label={`${label}减一分`}
+                        >
                           <Minus className="size-3 text-muted" />
-                        </FlavorButton>
+                        </button>
                         <span className="w-5 text-center text-sm font-medium text-charcoal">
                           {flavor[key]}
                         </span>
-                        <FlavorButton onClick={() => updateFlavor(key, 1)}>
+                        <button
+                          type="button"
+                          onClick={() => updateFlavor(key, 1)}
+                          className="flex size-8 items-center justify-center rounded-full bg-soft transition-colors hover:bg-border"
+                          aria-label={`${label}加一分`}
+                        >
                           <Plus className="size-3 text-muted" />
-                        </FlavorButton>
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -341,7 +357,7 @@ export function RecordModal({
                 whileTap={{ scale: 0.97 }}
                 onClick={handleSave}
                 disabled={!dishName.trim() || !restaurantName.trim()}
-                className="w-full rounded-2xl bg-primary-strong py-3.5 font-medium text-white shadow-sm transition-all duration-200 hover:bg-primary-strong/90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="w-full rounded-2xl bg-primary-strong py-3.5 font-medium text-surface shadow-sm transition-all duration-200 hover:bg-primary-strong/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 保存记录
               </motion.button>
@@ -353,7 +369,7 @@ export function RecordModal({
   );
 }
 
-function TextInput({
+function TextField({
   label,
   value,
   onChange,
@@ -380,23 +396,5 @@ function TextInput({
         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-charcoal transition-all placeholder:text-muted/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
     </div>
-  );
-}
-
-function FlavorButton({
-  children,
-  onClick,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex size-6 items-center justify-center rounded-full bg-soft transition-colors hover:bg-border"
-    >
-      {children}
-    </button>
   );
 }

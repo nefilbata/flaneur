@@ -1,45 +1,38 @@
 # Flaneur
 
-Flaneur is a personal food exploration journal built with Next.js. It starts with a calendar check-in flow and leaves room for a food map, flavor archive, seasonal scroll, and achievement hall.
+Personal food exploration journal for wandering a city through taste.
 
 ## Tech Stack
 
-- Next.js App Router
+- Next.js 16 App Router
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS v4
 - Framer Motion
+- Supabase
 - Recharts
 - Lucide React
-- Supabase
 
-## Local Development
+## Getting Started
 
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create a local environment file:
+1. `npm install`
+2. Copy `.env.example` to `.env.local`
+3. Fill in your Supabase credentials
+4. `npm run dev`
 
 ```bash
-cp .env.local.example .env.local
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Add your Supabase values when available:
+Open [http://localhost:3000](http://localhost:3000).
 
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
+## Features
 
-Run the development server:
-
-```bash
-npm run dev
-```
-
-Open http://localhost:3000.
+- Calendar check-ins
+- Food map exploration preview
+- Flavor radar archive
+- Seasonal scroll
+- Scratch-card achievements
 
 ## Database
 
@@ -49,7 +42,7 @@ The initial Supabase schema is in:
 supabase/migrations/202604300001_initial_schema.sql
 ```
 
-The app keeps demo records as a fallback when Supabase environment variables are not configured.
+The app uses demo records when Supabase environment variables are not configured.
 
 ## Quality Checks
 

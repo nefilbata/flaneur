@@ -102,15 +102,15 @@ export function CalendarView({
     currentYear === today.getFullYear() && currentMonth === today.getMonth();
 
   return (
-    <div className="card p-6 md:p-8">
+    <div className="card p-4 md:p-8">
       <div className="mb-6 flex items-center justify-between">
         <button
           type="button"
           onClick={goToPrev}
-          className="flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-soft"
+          className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
           aria-label="上个月"
         >
-          <ChevronLeft className="size-5 text-muted" />
+          <ChevronLeft className="size-5" />
         </button>
 
         <div className="text-center">
@@ -123,10 +123,10 @@ export function CalendarView({
         <button
           type="button"
           onClick={goToNext}
-          className="flex size-10 items-center justify-center rounded-full transition-colors duration-200 hover:bg-soft"
+          className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
           aria-label="下个月"
         >
-          <ChevronRight className="size-5 text-muted" />
+          <ChevronRight className="size-5" />
         </button>
       </div>
 
@@ -145,7 +145,7 @@ export function CalendarView({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: direction * -30 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="grid grid-cols-7 gap-2"
+          className="grid grid-cols-7 gap-1.5 sm:gap-2"
         >
           {cells.map((day, index) => {
             const date = day ? formatDate(currentYear, currentMonth, day) : "";
@@ -165,13 +165,11 @@ export function CalendarView({
       </AnimatePresence>
 
       <div className="mt-6 border-t border-border pt-5">
-        <div className="flex items-center justify-between gap-3">
-          <StatBlock label="本月记录" value={monthRecords.length} suffix="次打卡" />
-          <Divider />
+        <div className="grid grid-cols-3 gap-3">
+          <StatBlock label="本月记录" value={monthRecords.length} suffix="次" />
           <StatBlock label="探访餐厅" value={uniqueRestaurants} suffix="家" />
-          <Divider />
           <div>
-            <p className="text-sm text-muted">最爱菜系</p>
+            <p className="text-xs text-muted sm:text-sm">最爱菜系</p>
             <p className="mt-0.5 font-serif text-lg text-charcoal">
               {monthRecords.length > 0 ? getMostFrequentCuisine(monthRecords) : "暂无"}
             </p>
@@ -193,17 +191,13 @@ function StatBlock({
 }) {
   return (
     <div>
-      <p className="text-sm text-muted">{label}</p>
+      <p className="text-xs text-muted sm:text-sm">{label}</p>
       <p className="mt-0.5 font-serif text-2xl text-charcoal">
         {value}
         <span className="ml-1.5 font-sans text-sm text-muted">{suffix}</span>
       </p>
     </div>
   );
-}
-
-function Divider() {
-  return <div className="h-10 w-px bg-border" />;
 }
 
 function getMostFrequentCuisine(records: FoodRecord[]): string {

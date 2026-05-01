@@ -3,113 +3,140 @@ import type { FoodRecord } from "@/types/food-record";
 export interface AchievementDef {
   key: string;
   name: string;
+  emoji: string;
   description: string;
+  condition: string;
   check: (records: FoodRecord[]) => boolean;
 }
 
 export const ACHIEVEMENT_DEFS: AchievementDef[] = [
   {
-    key: "first_record",
+    key: "first_bite",
     name: "初探者",
-    description: "第一次记录美食",
+    emoji: "🍜",
+    condition: "第一次打卡",
+    description: "完成首次美食记录",
     check: (records) => records.length >= 1,
   },
   {
-    key: "week_five_cuisines",
+    key: "five_cuisines",
     name: "一周五味",
-    description: "一周内记录 5 种不同菜系",
-    check: (records) => hasCuisineVarietyInDays(records, 7, 5),
+    emoji: "🌈",
+    condition: "记录 5 种不同菜系",
+    description: "味蕾的多样冒险",
+    check: (records) => getCuisineCount(records) >= 5,
   },
   {
-    key: "street_walk",
+    key: "street_walker",
     name: "街头漫步",
-    description: "吃遍同一条街上的 3 家店",
-    check: (records) => hasThreeRestaurantsOnSameStreet(records),
+    emoji: "🏙️",
+    condition: "探索 5 个不同区域",
+    description: "用脚步丈量美食版图",
+    check: (records) => getDistinctAreas(records).size >= 3,
   },
   {
-    key: "map_conqueror",
+    key: "map_explorer",
     name: "地图征服者",
-    description: "点亮 10 个区域",
+    emoji: "🗺️",
+    condition: "探索 10 个不同区域",
+    description: "城市美食地理学家",
     check: (records) => getDistinctAreas(records).size >= 10,
   },
   {
     key: "streak_7",
     name: "连续打卡 7 天",
-    description: "连续 7 天有美食记录",
+    emoji: "🔥",
+    condition: "连续 7 天有记录",
+    description: "美食日记不间断",
     check: (records) => hasDayStreak(records, 7),
   },
   {
     key: "streak_30",
     name: "连续打卡 30 天",
-    description: "连续 30 天有美食记录",
+    emoji: "💎",
+    condition: "连续 30 天有记录",
+    description: "真正的美食修行者",
     check: (records) => hasDayStreak(records, 30),
   },
   {
-    key: "spicy_king",
-    name: "辣王",
-    description: "累计 20 条记录辣维度大于等于 4",
-    check: (records) =>
-      records.filter((record) => record.flavor.spicy >= 4).length >= 20,
+    key: "gourmet",
+    name: "美食家",
+    emoji: "👨‍🍳",
+    condition: "累计 50 条记录",
+    description: "半百美味阅历",
+    check: (records) => records.length >= 50,
   },
   {
-    key: "sweet_hunter",
+    key: "connoisseur",
+    name: "鉴赏家",
+    emoji: "🎖️",
+    condition: "10 条记录评分 ≥ 4.5",
+    description: "高分守护者",
+    check: (records) =>
+      records.filter((record) => (record.overallRating ?? 0) >= 4.5).length >= 10,
+  },
+  {
+    key: "explorer",
+    name: "百家记",
+    emoji: "📍",
+    condition: "探访 100 家不同餐厅",
+    description: "吃遍百家",
+    check: (records) =>
+      new Set(records.map((record) => normalize(record.restaurantName))).size >= 100,
+  },
+  {
+    key: "spicy_lover",
+    name: "辣味狂魔",
+    emoji: "🌶️",
+    condition: "5 条记录辣度评分 = 5",
+    description: "无辣不欢",
+    check: (records) => records.filter((record) => record.flavor.spicy === 5).length >= 5,
+  },
+  {
+    key: "sweet_tooth",
     name: "甜蜜控",
-    description: "累计 20 条记录甜维度大于等于 4",
-    check: (records) =>
-      records.filter((record) => record.flavor.sweet >= 4).length >= 20,
+    emoji: "🍰",
+    condition: "5 条记录甜度评分 = 5",
+    description: "甜蜜至上",
+    check: (records) => records.filter((record) => record.flavor.sweet === 5).length >= 5,
   },
   {
-    key: "hundred_records",
-    name: "百食记",
-    description: "总记录达到 100 条",
-    check: (records) => records.length >= 100,
+    key: "umami_master",
+    name: "鲜味大师",
+    emoji: "🍣",
+    condition: "5 条记录鲜度评分 = 5",
+    description: "追鲜达人",
+    check: (records) => records.filter((record) => record.flavor.umami === 5).length >= 5,
   },
   {
-    key: "four_season_diner",
+    key: "night_owl",
+    name: "深夜食堂",
+    emoji: "🌙",
+    condition: "3 条记录在 22:00 后",
+    description: "夜的美食猎手",
+    check: (records) => records.filter((record) => getRecordHour(record) >= 22).length >= 3,
+  },
+  {
+    key: "early_bird",
+    name: "早起觅食",
+    emoji: "🌅",
+    condition: "3 条记录在 8:00 前",
+    description: "晨曦中的美味",
+    check: (records) => records.filter((record) => getRecordHour(record) < 8).length >= 3,
+  },
+  {
+    key: "all_seasons",
     name: "四季食客",
-    description: "春夏秋冬各至少 5 条记录",
+    emoji: "🍂",
+    condition: "春夏秋冬各至少 1 条",
+    description: "四季流转，味不停步",
     check: (records) => {
       const seasons = { spring: 0, summer: 0, autumn: 0, winter: 0 };
       records.forEach((record) => {
         seasons[getSeason(record.recordDate)] += 1;
       });
-      return Object.values(seasons).every((count) => count >= 5);
+      return Object.values(seasons).every((count) => count >= 1);
     },
-  },
-  {
-    key: "late_night_canteen",
-    name: "深夜食堂",
-    description: "22:00 后记录 10 次",
-    check: (records) =>
-      records.filter((record) => getRecordHour(record) >= 22).length >= 10,
-  },
-  {
-    key: "early_bird",
-    name: "早起的鸟",
-    description: "8:00 前记录 10 次",
-    check: (records) =>
-      records.filter((record) => getRecordHour(record) < 8).length >= 10,
-  },
-  {
-    key: "old_gourmet",
-    name: "老饕",
-    description: "写过 20 条超过 100 字的品鉴笔记",
-    check: (records) =>
-      records.filter((record) => (record.tastingNotes?.trim().length ?? 0) > 100)
-        .length >= 20,
-  },
-  {
-    key: "restaurant_explorer",
-    name: "探店达人",
-    description: "累计去过 50 家不同餐厅",
-    check: (records) =>
-      new Set(records.map((record) => normalize(record.restaurantName))).size >= 50,
-  },
-  {
-    key: "loyal_fan",
-    name: "忠实粉丝",
-    description: "同一家餐厅去过 5 次以上",
-    check: (records) => maxCount(records.map((record) => record.restaurantName)) >= 5,
   },
 ];
 
@@ -123,23 +150,12 @@ export function checkAchievements(
   );
 }
 
-function hasCuisineVarietyInDays(
-  records: FoodRecord[],
-  days: number,
-  targetCount: number
-) {
-  const sortedDates = uniqueSortedTimestamps(records);
-  return sortedDates.some((start) => {
-    const end = start + (days - 1) * dayMs();
-    const cuisines = new Set<string>();
-    records.forEach((record) => {
-      const timestamp = toDayTimestamp(record.recordDate);
-      if (timestamp >= start && timestamp <= end) {
-        record.cuisineTags.forEach((tag) => cuisines.add(normalize(tag)));
-      }
-    });
-    return cuisines.size >= targetCount;
-  });
+function getCuisineCount(records: FoodRecord[]) {
+  const cuisines = new Set<string>();
+  records.forEach((record) =>
+    record.cuisineTags.forEach((tag) => cuisines.add(normalize(tag)))
+  );
+  return cuisines.size;
 }
 
 function hasDayStreak(records: FoodRecord[], targetDays: number) {
@@ -149,21 +165,6 @@ function hasDayStreak(records: FoodRecord[], targetDays: number) {
       dates.has(start + index * dayMs())
     ).every(Boolean)
   );
-}
-
-function hasThreeRestaurantsOnSameStreet(records: FoodRecord[]) {
-  const streetToRestaurants = new Map<string, Set<string>>();
-
-  records.forEach((record) => {
-    const street = extractStreet(record.restaurantAddress);
-    if (!street) return;
-
-    const restaurants = streetToRestaurants.get(street) ?? new Set<string>();
-    restaurants.add(normalize(record.restaurantName));
-    streetToRestaurants.set(street, restaurants);
-  });
-
-  return [...streetToRestaurants.values()].some((restaurants) => restaurants.size >= 3);
 }
 
 function getDistinctAreas(records: FoodRecord[]) {
@@ -196,12 +197,6 @@ function getRecordHour(record: FoodRecord) {
   return Number.isNaN(date.getTime()) ? 12 : date.getHours();
 }
 
-function uniqueSortedTimestamps(records: FoodRecord[]) {
-  return [...new Set(records.map((record) => toDayTimestamp(record.recordDate)))].sort(
-    (a, b) => a - b
-  );
-}
-
 function toDayTimestamp(date: string) {
   return new Date(`${date}T00:00:00`).getTime();
 }
@@ -214,24 +209,8 @@ function normalize(value?: string) {
   return (value ?? "").trim().toLowerCase();
 }
 
-function maxCount(values: string[]) {
-  const counts = new Map<string, number>();
-  values.forEach((value) => {
-    const key = normalize(value);
-    if (!key) return;
-    counts.set(key, (counts.get(key) ?? 0) + 1);
-  });
-  return Math.max(0, ...counts.values());
-}
-
-function extractStreet(address?: string) {
-  if (!address) return "";
-  const match = address.match(/([\u4e00-\u9fa5A-Za-z0-9]+(?:路|街|巷|道|avenue|street|road|lane))/i);
-  return normalize(match?.[1]);
-}
-
 function extractArea(address?: string) {
   if (!address) return "";
-  const match = address.match(/([\u4e00-\u9fa5A-Za-z0-9]+(?:区|县|镇|商圈|CBD|area))/i);
-  return normalize(match?.[1] ?? address.split(/[,\s，]/)[0]);
+  const match = address.match(/([\u4e00-\u9fa5A-Za-z0-9]+(?:路|街|巷|道|商圈|CBD|area))/i);
+  return normalize(match?.[1] ?? address.split(/[,\s，、]/)[0]);
 }

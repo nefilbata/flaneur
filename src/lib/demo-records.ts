@@ -9,7 +9,7 @@ export const DEMO_RECORDS: FoodRecord[] = [
     cuisineTags: ["火锅", "川菜"],
     overallRating: 4,
     flavor: { umami: 4, spicy: 5, sweet: 1, aromatic: 3, sour: 1, rich: 4 },
-    tastingNotes: "牛油锅底够香，毛肚七上八下刚刚好。",
+    tastingNotes: "牛油锅底足够香，毛肚七上八下刚刚好。",
     photos: [
       {
         id: "p1",
@@ -23,7 +23,7 @@ export const DEMO_RECORDS: FoodRecord[] = [
   {
     id: "2",
     dishName: "握寿司拼盘",
-    restaurantName: "鮨 · 初心",
+    restaurantName: "鲔 · 初心",
     restaurantAddress: "梧桐街 12 号",
     cuisineTags: ["日料", "海鲜"],
     overallRating: 5,
@@ -85,7 +85,7 @@ export const DEMO_RECORDS: FoodRecord[] = [
     cuisineTags: ["甜品", "意餐"],
     overallRating: 5,
     flavor: { umami: 1, spicy: 0, sweet: 4, aromatic: 4, sour: 0, rich: 5 },
-    tastingNotes: "咖啡味浓郁，马斯卡彭绵密。这是目前吃过最舒服的一块提拉米苏。",
+    tastingNotes: "咖啡味浓郁，马斯卡彭细腻密实。",
     photos: [
       {
         id: "p5",
