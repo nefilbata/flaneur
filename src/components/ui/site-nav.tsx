@@ -40,8 +40,8 @@ export function SiteNav() {
         </div>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface/95 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_30px_rgba(44,44,44,0.08)] backdrop-blur-xl md:hidden">
-        <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface/95 px-2.5 pb-[max(0.55rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(44,44,44,0.08)] backdrop-blur-xl md:hidden">
+        <div className="mx-auto grid max-w-lg grid-cols-5 gap-0.5">
           {navItems.map((item) => (
             <NavLink
               key={item.href}
@@ -74,13 +74,13 @@ function NavLink({
       <Link
         href={item.href}
         className={[
-          "flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[11px] transition",
+          "flex min-h-10 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] transition",
           isActive
             ? "bg-primary-strong text-surface shadow-sm"
             : "text-muted hover:bg-soft hover:text-charcoal",
         ].join(" ")}
       >
-        <Icon aria-hidden="true" className="size-5" strokeWidth={1.5} />
+        <Icon aria-hidden="true" className="size-4" strokeWidth={1.5} />
         <span>{item.label}</span>
       </Link>
     );

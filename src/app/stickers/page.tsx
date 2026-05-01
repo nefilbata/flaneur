@@ -45,26 +45,28 @@ export default function StickersPage() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-4xl animate-fade-in-up pb-24">
-      <header className="mb-8 text-center">
-        <p className="text-sm uppercase tracking-widest text-muted">Sticker Album</p>
-        <h1 className="mt-2 font-serif text-4xl text-charcoal md:text-5xl">
+    <section className="mx-auto max-w-4xl animate-fade-in-up pb-20 sm:pb-24">
+      <header className="mb-6 text-center sm:mb-8">
+        <p className="text-xs uppercase tracking-widest text-muted sm:text-sm">
+          Sticker Album
+        </p>
+        <h1 className="mt-1.5 font-serif text-3xl text-charcoal sm:mt-2 sm:text-4xl md:text-5xl">
           {"\u8d34\u7eb8\u518c"}
         </h1>
-        <p className="mt-2 text-sm text-muted">
+        <p className="mt-1.5 text-xs text-muted sm:mt-2 sm:text-sm">
           {"\u6bcf\u4e00\u9910\u90fd\u662f\u4e00\u679a\u6536\u85cf"}
         </p>
       </header>
 
       {stickers.length > 0 ? (
-        <div className="grid gap-x-4 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-x-4 gap-y-7 sm:grid-cols-2 sm:gap-y-9 lg:grid-cols-3">
           {stickers.map((item, index) => (
             <article key={item.record.id} className="text-center">
               <div
-                className="mx-auto w-fit rounded-[30px] bg-surface p-1 shadow-[0_12px_30px_rgba(44,44,44,0.12)] transition duration-300 hover:scale-105 hover:rotate-0"
+                className="mx-auto w-fit rounded-[24px] bg-surface p-1 shadow-[0_12px_30px_rgba(44,44,44,0.12)] transition duration-300 hover:scale-105 hover:rotate-0 sm:rounded-[30px]"
                 style={getStickerStyle(index)}
               >
-                <div className="relative size-[210px] overflow-hidden rounded-3xl">
+                <div className="relative aspect-square w-[min(280px,75vw)] overflow-hidden rounded-[22px] sm:size-[210px] sm:rounded-3xl">
                   <Image
                     src={item.url}
                     alt={item.record.dishName}
@@ -74,7 +76,7 @@ export default function StickersPage() {
                   />
                 </div>
               </div>
-              <p className="mt-4 font-serif text-lg text-charcoal">
+              <p className="mt-3 font-serif text-base text-charcoal sm:mt-4 sm:text-lg">
                 {item.record.dishName}
               </p>
               <p className="text-xs text-muted">{item.record.recordDate}</p>
@@ -82,23 +84,23 @@ export default function StickersPage() {
           ))}
         </div>
       ) : (
-        <div className="card mx-auto max-w-md p-8 text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-full bg-soft text-primary-strong">
-            <Camera className="size-6" />
+        <div className="card mx-auto max-w-md p-6 text-center sm:p-8">
+          <div className="mx-auto grid size-12 place-items-center rounded-full bg-soft text-primary-strong sm:size-14">
+            <Camera className="size-5 sm:size-6" />
           </div>
-          <p className="mt-4 font-serif text-2xl text-charcoal">
+          <p className="mt-3 font-serif text-xl text-charcoal sm:mt-4 sm:text-2xl">
             {"\u8fd8\u6ca1\u6709\u8d34\u7eb8"}
           </p>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-xs text-muted sm:text-sm">
             {"\u53bb\u8bb0\u5f55\u4e00\u6b21\u7f8e\u98df\u5427"}
           </p>
         </div>
       )}
 
-      <div className="mt-10 text-center">
+      <div className="mt-8 text-center sm:mt-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-full bg-primary-strong px-5 py-3 text-sm font-medium text-surface shadow-sm"
+          className="inline-flex items-center gap-2 rounded-full bg-primary-strong px-4 py-2.5 text-xs font-medium text-surface shadow-sm sm:px-5 sm:py-3 sm:text-sm"
         >
           <Plus className="size-4" />
           {"\u56de\u5230\u9996\u9875\u8bb0\u5f55\u7f8e\u98df"}

@@ -110,37 +110,37 @@ export function CalendarView({
     currentYear === today.getFullYear() && currentMonth === today.getMonth();
 
   return (
-    <div className="card p-4 md:p-8">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="card p-3.5 sm:p-4 md:p-8">
+      <div className="mb-4 flex items-center justify-between sm:mb-6">
         <button
           type="button"
           onClick={goToPrev}
-          className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
+          className="grid size-9 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal sm:size-11"
           aria-label="Previous month"
         >
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="size-4 sm:size-5" />
         </button>
 
         <div className="text-center">
-          <h2 className="font-serif text-2xl tracking-wide text-charcoal md:text-3xl">
+          <h2 className="font-serif text-xl tracking-wide text-charcoal sm:text-2xl md:text-3xl">
             {MONTHS[currentMonth]}
           </h2>
-          <p className="mt-0.5 text-sm text-muted">{currentYear}</p>
+          <p className="mt-0.5 text-xs text-muted sm:text-sm">{currentYear}</p>
         </div>
 
         <button
           type="button"
           onClick={goToNext}
-          className="grid size-11 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal"
+          className="grid size-9 place-items-center rounded-full bg-soft text-muted transition-colors duration-200 hover:bg-border hover:text-charcoal sm:size-11"
           aria-label="Next month"
         >
-          <ChevronRight className="size-5" />
+          <ChevronRight className="size-4 sm:size-5" />
         </button>
       </div>
 
-      <div className="mb-3 grid grid-cols-7">
+      <div className="mb-2 grid grid-cols-7 sm:mb-3">
         {WEEKDAYS.map((day) => (
-          <div key={day} className="py-1 text-center text-xs font-medium text-muted">
+          <div key={day} className="py-1 text-center text-[11px] font-medium text-muted sm:text-xs">
             {day}
           </div>
         ))}
@@ -153,7 +153,7 @@ export function CalendarView({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: direction * -30 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="grid grid-cols-7 gap-1.5 sm:gap-2"
+          className="grid grid-cols-7 gap-1 sm:gap-2"
         >
           {cells.map((day, index) => {
             const date = day ? formatDate(currentYear, currentMonth, day) : "";
@@ -172,13 +172,13 @@ export function CalendarView({
         </motion.div>
       </AnimatePresence>
 
-      <div className="mt-6 border-t border-border pt-5">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="mt-4 border-t border-border pt-4 sm:mt-6 sm:pt-5">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <StatBlock label={"\u672c\u6708\u8bb0\u5f55"} value={monthRecords.length} suffix={"\u6b21"} />
           <StatBlock label={"\u63a2\u8bbf\u9910\u5385"} value={uniqueRestaurants} suffix={"\u5bb6"} />
           <div>
-            <p className="text-xs text-muted sm:text-sm">{"\u6700\u7231\u83dc\u7cfb"}</p>
-            <p className="mt-0.5 font-serif text-lg text-charcoal">
+            <p className="text-[11px] text-muted sm:text-sm">{"\u6700\u7231\u83dc\u7cfb"}</p>
+            <p className="mt-0.5 font-serif text-base text-charcoal sm:text-lg">
               {monthRecords.length > 0 ? getMostFrequentCuisine(monthRecords) : "\u6682\u65e0"}
             </p>
           </div>
@@ -199,10 +199,10 @@ function StatBlock({
 }) {
   return (
     <div>
-      <p className="text-xs text-muted sm:text-sm">{label}</p>
-      <p className="mt-0.5 font-serif text-2xl text-charcoal">
+      <p className="text-[11px] text-muted sm:text-sm">{label}</p>
+      <p className="mt-0.5 font-serif text-xl text-charcoal sm:text-2xl">
         {value}
-        <span className="ml-1.5 font-sans text-sm text-muted">{suffix}</span>
+        <span className="ml-1 font-sans text-xs text-muted sm:ml-1.5 sm:text-sm">{suffix}</span>
       </p>
     </div>
   );

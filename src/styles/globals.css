@@ -53,6 +53,12 @@ html {
   background: var(--color-background);
 }
 
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 body {
   min-height: 100vh;
   margin: 0;

@@ -35,7 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen">
         <SiteNav />
-        <main className="min-h-[calc(100vh-4rem)] px-4 py-6 md:px-8 lg:px-16">
+        <main className="min-h-[calc(100vh-4rem)] px-4 py-4 sm:py-6 md:px-8 lg:px-16">
           {children}
         </main>
         <WelcomeOverlay />
