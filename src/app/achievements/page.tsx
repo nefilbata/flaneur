@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Award, Sparkles, X } from "lucide-react";
 import { ScratchCard } from "@/components/scratch-card/scratch-card";
-import { ACHIEVEMENT_DEFS, checkAchievements } from "@/lib/achievements";
+import { ACHIEVEMENT_DEFS, checkAchievements, type AchievementDef } from "@/lib/achievements";
 import { DEMO_RECORDS } from "@/lib/demo-records";
 
 type AchievementState = {
@@ -38,15 +39,6 @@ export default function AchievementsPage() {
     (achievement) => achievement.key === activeKey
   );
   const progress = Math.round((unlockedCount / ACHIEVEMENT_DEFS.length) * 100);
-
-  useEffect(() => {
-    if (!activeAchievement) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [activeAchievement]);
 
   const markScratched = (key: string) => {
     setStates((current) =>
@@ -165,46 +157,77 @@ export default function AchievementsPage() {
         })}
       </div>
 
-      {activeAchievement && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-charcoal/45 p-5 backdrop-blur-sm">
-          <div className="relative w-[min(360px,88vw)] rounded-[24px] border border-border bg-surface p-5 shadow-[0_24px_80px_rgba(44,44,44,0.24)]">
-            <button
-              type="button"
-              onClick={() => setActiveKey(null)}
-              className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-soft text-muted transition hover:bg-border"
-              aria-label="关闭刮卡"
-            >
-              <X className="size-4" />
-            </button>
-            <p className="text-center text-xs uppercase tracking-[0.2em] text-muted">
-              Scratch card
-            </p>
-            <h2 className="mb-4 mt-1 text-center font-serif text-2xl text-charcoal">
-              刮开新成就
-            </h2>
-            <div className="flex justify-center">
-              <ScratchCard
-                width={280}
-                height={196}
-                revealThreshold={0.5}
-                onReveal={() => markScratched(activeAchievement.key)}
-              >
-                <div className="grid size-full place-items-center bg-background p-5 text-center">
-                  <div>
-                    <div className="text-5xl">{activeAchievement.emoji}</div>
-                    <h3 className="mt-3 font-serif text-xl text-charcoal">
-                      {activeAchievement.name}
-                    </h3>
-                    <p className="mt-2 text-xs leading-5 text-muted">
-                      {activeAchievement.description}
-                    </p>
-                  </div>
-                </div>
-              </ScratchCard>
-            </div>
-          </div>
-        </div>
-      )}
+      <AchievementScratchModal
+        achievement={activeAchievement}
+        onClose={() => setActiveKey(null)}
+        onReveal={markScratched}
+      />
     </section>
+  );
+}
+
+function AchievementScratchModal({
+  achievement,
+  onClose,
+  onReveal,
+}: {
+  achievement?: AchievementDef;
+  onClose: () => void;
+  onReveal: (key: string) => void;
+}) {
+  useEffect(() => {
+    if (!achievement) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [achievement]);
+
+  if (!achievement || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-charcoal/45 px-5 py-[max(1rem,env(safe-area-inset-top))] backdrop-blur-sm">
+      <div className="relative max-h-[calc(100dvh-2rem)] w-[min(320px,88vw)] overflow-y-auto rounded-[24px] border border-border bg-surface p-4 shadow-[0_24px_80px_rgba(44,44,44,0.24)]">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-soft text-muted transition hover:bg-border"
+          aria-label="关闭刮卡"
+        >
+          <X className="size-4" />
+        </button>
+        <p className="text-center text-[11px] uppercase tracking-[0.24em] text-muted">
+          Scratch card
+        </p>
+        <h2 className="mb-3 mt-1 text-center font-serif text-2xl text-charcoal">
+          刮开新成就
+        </h2>
+        <div className="flex justify-center">
+          <ScratchCard
+            width={240}
+            height={168}
+            revealThreshold={0.5}
+            onReveal={() => onReveal(achievement.key)}
+          >
+            <div className="grid size-full place-items-center bg-background p-4 text-center">
+              <div>
+                <div className="text-4xl">{achievement.emoji}</div>
+                <h3 className="mt-2 font-serif text-lg text-charcoal">
+                  {achievement.name}
+                </h3>
+                <p className="mt-1.5 text-xs leading-5 text-muted">
+                  {achievement.description}
+                </p>
+              </div>
+            </div>
+          </ScratchCard>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }

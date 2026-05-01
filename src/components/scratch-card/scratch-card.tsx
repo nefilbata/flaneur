@@ -70,12 +70,12 @@ export function ScratchCard({
     context.fillStyle = sheen;
     context.fillRect(0, 0, width, height);
 
-    context.fillStyle = "rgba(255, 250, 243, 0.72)";
+    context.fillStyle = "rgba(255, 250, 243, 0.78)";
     context.font = "600 15px system-ui, sans-serif";
     context.textAlign = "center";
-    context.fillText("刮一刮", width / 2, height / 2);
+    context.fillText("刮一刮", width / 2, height / 2 - 6);
     context.font = "12px system-ui, sans-serif";
-    context.fillText("揭开新的味觉勋章", width / 2, height / 2 + 24);
+    context.fillText("揭开新的味觉勋章", width / 2, height / 2 + 20);
   }, [height, width]);
 
   useEffect(() => {
