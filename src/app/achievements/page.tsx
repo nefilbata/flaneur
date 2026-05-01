@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { X } from "lucide-react";
+import { Award, Sparkles, X } from "lucide-react";
 import { ScratchCard } from "@/components/scratch-card/scratch-card";
 import { ACHIEVEMENT_DEFS, checkAchievements } from "@/lib/achievements";
 import { DEMO_RECORDS } from "@/lib/demo-records";
@@ -37,6 +37,7 @@ export default function AchievementsPage() {
   const activeAchievement = ACHIEVEMENT_DEFS.find(
     (achievement) => achievement.key === activeKey
   );
+  const progress = Math.round((unlockedCount / ACHIEVEMENT_DEFS.length) * 100);
 
   useEffect(() => {
     if (!activeAchievement) return;
@@ -57,36 +58,61 @@ export default function AchievementsPage() {
   };
 
   return (
-    <section className="mx-auto max-w-3xl animate-fade-in-up pb-20 sm:pb-24">
-      <header className="mb-5 text-center sm:mb-8">
-        <h1 className="font-serif text-3xl text-charcoal sm:text-4xl md:text-5xl">
-          成就殿堂
-        </h1>
-        <p className="mt-1.5 text-xs text-muted sm:mt-2 sm:text-sm">
-          每一次品尝，都是一枚勋章
-        </p>
-        <p className="mt-3 font-serif text-xl text-primary-strong sm:mt-4 sm:text-2xl">
-          已解锁 {unlockedCount} / {ACHIEVEMENT_DEFS.length}
-        </p>
-      </header>
+    <section className="mx-auto max-w-6xl animate-fade-in-up pb-20 md:pb-12">
+      <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <header className="rounded-[28px] border border-border bg-surface px-5 py-6 shadow-[0_16px_46px_rgba(44,44,44,0.07)] sm:px-7 sm:py-8">
+          <p className="text-xs uppercase tracking-[0.26em] text-muted">
+            Achievement hall
+          </p>
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="font-serif text-4xl text-charcoal md:text-5xl">
+                成就殿堂
+              </h1>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+                每一枚勋章都来自一次真实的探索，不需要喧哗，慢慢点亮就好。
+              </p>
+            </div>
+            <div className="w-full rounded-2xl bg-background p-4 sm:w-44">
+              <p className="text-xs text-muted">已解锁</p>
+              <p className="mt-1 font-serif text-3xl text-primary-strong">
+                {unlockedCount}
+                <span className="ml-1 font-sans text-sm text-muted">
+                  / {ACHIEVEMENT_DEFS.length}
+                </span>
+              </p>
+            </div>
+          </div>
 
-      {pending.length > 0 && (
+          <div className="mt-6 h-2 overflow-hidden rounded-full bg-soft">
+            <div
+              className="h-full rounded-full bg-primary-strong transition-[width] duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </header>
+
         <button
           type="button"
-          onClick={() => setActiveKey(pending[0].key)}
-          className="card mb-4 w-full p-4 text-left ring-2 ring-primary/30 sm:mb-5 sm:p-5"
+          onClick={() => pending[0] && setActiveKey(pending[0].key)}
+          disabled={pending.length === 0}
+          className="rounded-[28px] border border-primary/30 bg-[#f6ead7] px-5 py-6 text-left shadow-[0_16px_46px_rgba(173,133,129,0.12)] transition hover:-translate-y-0.5 disabled:border-border disabled:bg-surface disabled:shadow-none"
         >
-          <p className="text-xs text-muted sm:text-sm">新的惊喜</p>
-          <p className="mt-1 font-serif text-xl text-charcoal sm:text-2xl">
-            你有 {pending.length} 张待刮的成就卡
-          </p>
-          <p className="mt-2 text-xs text-primary-strong sm:text-sm">
-            点击前往刮卡
-          </p>
+          <span className="grid size-11 place-items-center rounded-full bg-surface text-primary-strong">
+            <Sparkles className="size-5" />
+          </span>
+          <span className="mt-5 block font-serif text-2xl text-charcoal">
+            {pending.length > 0 ? "有新徽章待揭开" : "暂无待刮徽章"}
+          </span>
+          <span className="mt-2 block text-sm leading-6 text-muted">
+            {pending.length > 0
+              ? `${pending.length} 张成就卡已经准备好，点开后会直接出现在当前屏幕。`
+              : "继续记录，新的探索会在这里安静出现。"}
+          </span>
         </button>
-      )}
+      </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {ACHIEVEMENT_DEFS.map((achievement) => {
           const state = states.find((item) => item.key === achievement.key);
           const isUnlocked = Boolean(state);
@@ -99,36 +125,39 @@ export default function AchievementsPage() {
               onClick={() => isPending && setActiveKey(achievement.key)}
               disabled={!isPending}
               className={[
-                "flex aspect-square min-h-[148px] flex-col items-center justify-center overflow-hidden rounded-card border p-3 text-center transition sm:min-h-[190px] sm:p-4",
+                "group min-h-[156px] rounded-[22px] border px-3 py-4 text-center transition sm:min-h-[172px]",
                 isPending
-                  ? "border-warning/50 bg-[#f5dfaa] shadow-card hover:-translate-y-0.5"
+                  ? "border-primary/40 bg-[#f6ead7] shadow-[0_12px_30px_rgba(173,133,129,0.13)] hover:-translate-y-0.5"
                   : isUnlocked
-                    ? "border-primary/40 bg-surface shadow-card"
-                    : "border-border bg-soft/70 text-muted",
+                    ? "border-border bg-surface shadow-[0_8px_26px_rgba(44,44,44,0.06)]"
+                    : "border-border bg-soft/55 text-muted",
               ].join(" ")}
             >
-              <span className="block text-3xl leading-none sm:text-4xl">
+              <span
+                className={[
+                  "mx-auto grid size-14 place-items-center rounded-full text-3xl transition sm:size-16",
+                  isUnlocked
+                    ? "bg-background"
+                    : "bg-background/60 grayscale opacity-60",
+                ].join(" ")}
+              >
                 {isUnlocked ? achievement.emoji : "?"}
               </span>
               <span
                 className={[
-                  "mt-2 block text-xs font-semibold leading-5 sm:mt-3 sm:text-sm",
-                  isUnlocked ? "text-charcoal" : "text-muted blur-[2px]",
+                  "mt-3 block text-sm font-semibold leading-5",
+                  isUnlocked ? "text-charcoal" : "text-muted",
                 ].join(" ")}
               >
-                {achievement.name}
+                {isUnlocked ? achievement.name : "未解锁"}
               </span>
-              <span className="mt-1.5 block text-[11px] leading-4 text-muted sm:mt-2 sm:text-xs sm:leading-5">
+              <span className="mt-1.5 block text-[11px] leading-4 text-muted">
                 {isUnlocked ? achievement.description : achievement.condition}
               </span>
-              {state?.isScratched && (
-                <span className="mt-2 block text-[10px] text-muted sm:mt-3 sm:text-[11px]">
-                  {state.unlockedAt}
-                </span>
-              )}
               {isPending && (
-                <span className="mt-2 block text-[11px] font-medium text-primary-strong sm:mt-3 sm:text-xs">
-                  点击刮卡
+                <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-primary-strong">
+                  <Award className="size-3" />
+                  刮开
                 </span>
               )}
             </button>
@@ -137,8 +166,8 @@ export default function AchievementsPage() {
       </div>
 
       {activeAchievement && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-charcoal/40 p-5 backdrop-blur-sm">
-          <div className="relative w-[min(340px,85vw)] rounded-card bg-surface p-5 shadow-card-hover">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-charcoal/45 p-5 backdrop-blur-sm">
+          <div className="relative w-[min(360px,88vw)] rounded-[24px] border border-border bg-surface p-5 shadow-[0_24px_80px_rgba(44,44,44,0.24)]">
             <button
               type="button"
               onClick={() => setActiveKey(null)}
@@ -147,7 +176,10 @@ export default function AchievementsPage() {
             >
               <X className="size-4" />
             </button>
-            <h2 className="mb-3 text-center font-serif text-xl text-charcoal sm:mb-4 sm:text-2xl">
+            <p className="text-center text-xs uppercase tracking-[0.2em] text-muted">
+              Scratch card
+            </p>
+            <h2 className="mb-4 mt-1 text-center font-serif text-2xl text-charcoal">
               刮开新成就
             </h2>
             <div className="flex justify-center">
@@ -157,15 +189,13 @@ export default function AchievementsPage() {
                 revealThreshold={0.5}
                 onReveal={() => markScratched(activeAchievement.key)}
               >
-                <div className="grid size-full place-items-center bg-background p-5 text-center sm:p-6">
+                <div className="grid size-full place-items-center bg-background p-5 text-center">
                   <div>
-                    <div className="text-5xl sm:text-6xl">
-                      {activeAchievement.emoji}
-                    </div>
-                    <h3 className="mt-2 font-serif text-xl text-charcoal sm:mt-3 sm:text-2xl">
+                    <div className="text-5xl">{activeAchievement.emoji}</div>
+                    <h3 className="mt-3 font-serif text-xl text-charcoal">
                       {activeAchievement.name}
                     </h3>
-                    <p className="mt-2 text-xs leading-5 text-muted sm:text-sm sm:leading-6">
+                    <p className="mt-2 text-xs leading-5 text-muted">
                       {activeAchievement.description}
                     </p>
                   </div>

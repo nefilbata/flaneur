@@ -21,7 +21,18 @@ export default function HomePage() {
   );
   const [detailRecord, setDetailRecord] = useState<FoodRecord | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [addPresses, setAddPresses] = useState(0);
   const quote = getDailyQuote();
+
+  const today = new Date().toISOString().split("T")[0];
+  const todaysRecord = records.find((record) => record.recordDate === today);
+  const latestRecords = records.slice(0, 3);
+
+  const openRecordForm = (date = today) => {
+    setSelectedDate(date);
+    setAddPresses((current) => current + 1);
+    setIsModalOpen(true);
+  };
 
   const handleDayClick = (date: string) => {
     setSelectedDate(date);
@@ -30,7 +41,7 @@ export default function HomePage() {
       setDetailRecord(existing);
       setIsDetailOpen(true);
     } else {
-      setIsModalOpen(true);
+      openRecordForm(date);
     }
   };
 
@@ -70,102 +81,149 @@ export default function HomePage() {
   };
 
   return (
-    <div className="mx-auto max-w-lg animate-fade-in-up pb-28 sm:pb-24">
-      <div className="mb-5 text-center sm:mb-8">
-        <h1 className="font-serif text-3xl tracking-wide text-charcoal sm:text-4xl md:text-5xl">
-          Fl{"\u00e2"}neur
-        </h1>
-        <p className="mt-1.5 text-xs uppercase tracking-widest text-muted sm:mt-2 sm:text-sm">
-          {"\u7528\u5473\u857e\u6f2b\u6e38\u57ce\u5e02"}
-        </p>
-      </div>
-
-      <CalendarView records={records} onDayClick={handleDayClick} />
-
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.12, duration: 0.4 }}
-        className="card mt-4 px-4 py-3.5 sm:mt-5 sm:px-5 sm:py-4"
-      >
-        <p className="font-serif text-sm leading-6 text-charcoal sm:text-base sm:leading-7">
-          {"\u300c"}
-          {quote.text}
-          {"\u300d"}
-        </p>
-        {quote.source && (
-          <p className="mt-2 text-right text-[11px] text-muted sm:text-xs">
-            {quote.source}
+    <div className="mx-auto max-w-6xl animate-fade-in-up pb-20 md:pb-12">
+      <header className="mb-5 flex flex-col gap-4 sm:mb-7 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.26em] text-muted">
+            Taste journal
           </p>
-        )}
-      </motion.div>
+          <h1 className="mt-1 font-serif text-4xl tracking-wide text-charcoal md:text-5xl">
+            Fl{"\u00e2"}neur
+          </h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+            用味蕾漫游城市，把今天这一餐收进自己的食物地图。
+          </p>
+        </div>
 
-      <button
-        type="button"
-        onClick={() => setIsSpinOpen(true)}
-        className="card mt-3 flex w-full items-center justify-between px-4 py-3.5 text-left transition hover:-translate-y-0.5 sm:mt-4 sm:px-5 sm:py-4"
-      >
-        <span>
-          <span className="block font-serif text-lg text-charcoal sm:text-xl">
-            {"\u4eca\u5929\u5403\u4ec0\u4e48\uff1f"}
-          </span>
-          <span className="mt-1 block text-xs text-muted sm:text-sm">
-            {"\u628a\u9009\u62e9\u56f0\u96be\u4ea4\u7ed9\u8f6c\u76d8"}
-          </span>
-        </span>
-        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-soft text-primary-strong sm:size-11">
-          <Sparkles className="size-4 sm:size-5" />
-        </span>
-      </button>
+        <AddRecordButton
+          presses={addPresses}
+          label={todaysRecord ? "补一餐" : "记录今天"}
+          onClick={() => openRecordForm()}
+        />
+      </header>
 
-      <div className="mt-3 grid gap-3 sm:mt-4 sm:grid-cols-2">
-        <Link
-          href="/stickers"
-          className="card flex items-center gap-3 p-3.5 transition hover:-translate-y-0.5 sm:gap-4 sm:p-4"
-        >
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-soft text-primary-strong sm:size-11">
-            <Images className="size-4 sm:size-5" />
-          </span>
-          <span>
-            <span className="block font-serif text-base text-charcoal sm:text-lg">
-              {"\u8d34\u7eb8\u518c"}
-            </span>
-            <span className="text-[11px] text-muted sm:text-xs">
-              {"\u6536\u85cf\u6bcf\u4e00\u9910\u7684\u5c0f\u56fe\u7247"}
-            </span>
-          </span>
-        </Link>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.12fr)_360px] lg:items-start">
+        <div className="min-w-0">
+          <CalendarView records={records} onDayClick={handleDayClick} />
+        </div>
 
-        <Link
-          href="/buddy"
-          className="card flex items-center gap-3 p-3.5 transition hover:-translate-y-0.5 sm:gap-4 sm:p-4"
-        >
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-soft text-primary-strong sm:size-11">
-            <UsersRound className="size-4 sm:size-5" />
-          </span>
-          <span>
-            <span className="block font-serif text-base text-charcoal sm:text-lg">
-              {"\u6f2b\u6e38\u642d\u6863"}
-            </span>
-            <span className="text-[11px] text-muted sm:text-xs">
-              {"\u5373\u5c06\u4e0a\u7ebf\uff0c\u548c\u670b\u53cb\u4e00\u8d77\u8bb0\u5f55"}
-            </span>
-          </span>
-        </Link>
+        <aside className="space-y-4">
+          <section className="rounded-[22px] border border-border bg-surface px-5 py-5 shadow-[0_12px_36px_rgba(44,44,44,0.07)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted">
+                  Today
+                </p>
+                <h2 className="mt-2 font-serif text-2xl text-charcoal">
+                  {todaysRecord ? todaysRecord.dishName : "今天吃什么？"}
+                </h2>
+                <p className="mt-1 text-sm text-muted">
+                  {todaysRecord
+                    ? todaysRecord.restaurantName
+                    : "把选择困难交给转盘，也可以直接记一餐。"}
+                </p>
+              </div>
+              <motion.button
+                type="button"
+                whileTap={{ rotate: 18, scale: 0.94 }}
+                onClick={() => (todaysRecord ? openRecordForm() : setIsSpinOpen(true))}
+                className="grid size-12 shrink-0 place-items-center rounded-full bg-soft text-primary-strong transition hover:bg-border"
+                aria-label={todaysRecord ? "新增一餐" : "打开转盘"}
+              >
+                {todaysRecord ? (
+                  <Plus className="size-5" strokeWidth={2} />
+                ) : (
+                  <Sparkles className="size-5" strokeWidth={1.7} />
+                )}
+              </motion.button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setIsSpinOpen(true)}
+                className="rounded-2xl bg-background px-3 py-3 text-left text-sm text-charcoal transition hover:bg-soft"
+              >
+                转盘灵感
+                <span className="mt-1 block text-xs text-muted">先选方向</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => openRecordForm()}
+                className="rounded-2xl bg-primary text-left text-sm font-medium text-surface shadow-[0_8px_20px_rgba(173,133,129,0.22)] transition hover:bg-primary-strong"
+              >
+                记一餐
+                <span className="mt-1 block text-xs font-normal text-surface/80">
+                  照片、评分、笔记
+                </span>
+              </button>
+            </div>
+          </section>
+
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="rounded-[22px] border border-border bg-surface px-5 py-5"
+          >
+            <p className="font-serif text-base leading-7 text-charcoal">
+              {"「"}
+              {quote.text}
+              {"」"}
+            </p>
+            {quote.source && (
+              <p className="mt-3 text-right text-xs text-muted">{quote.source}</p>
+            )}
+          </motion.section>
+
+          <div className="grid grid-cols-2 gap-3">
+            <ActionLink
+              href="/stickers"
+              icon={<Images className="size-4" />}
+              title="贴纸册"
+              detail="收藏小图片"
+            />
+            <ActionLink
+              href="/buddy"
+              icon={<UsersRound className="size-4" />}
+              title="漫游搭档"
+              detail="未来一起记"
+            />
+          </div>
+
+          <section className="rounded-[22px] border border-border bg-surface px-5 py-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-serif text-lg text-charcoal">最近记录</h2>
+              <span className="text-xs text-muted">{records.length} 餐</span>
+            </div>
+            <div className="space-y-3">
+              {latestRecords.map((record) => (
+                <button
+                  key={record.id}
+                  type="button"
+                  onClick={() => {
+                    setDetailRecord(record);
+                    setIsDetailOpen(true);
+                  }}
+                  className="flex w-full items-center justify-between gap-3 rounded-2xl bg-background px-3 py-3 text-left transition hover:bg-soft"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium text-charcoal">
+                      {record.dishName}
+                    </span>
+                    <span className="block truncate text-xs text-muted">
+                      {record.restaurantName}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-xs text-muted">
+                    {record.recordDate.slice(5)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        </aside>
       </div>
-
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-          setSelectedDate(new Date().toISOString().split("T")[0]);
-          setIsModalOpen(true);
-        }}
-        className="fixed bottom-[calc(3.4rem+16px+env(safe-area-inset-bottom))] right-5 z-30 flex size-12 items-center justify-center rounded-full bg-primary text-surface shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition-shadow duration-200 hover:shadow-[0_4px_14px_rgba(0,0,0,0.18)] md:bottom-8 md:right-8"
-        aria-label="Add record"
-      >
-        <Plus className="size-5" strokeWidth={2} />
-      </motion.button>
 
       <RecordModal
         isOpen={isModalOpen}
@@ -187,5 +245,60 @@ export default function HomePage() {
 
       <SpinModal isOpen={isSpinOpen} onClose={() => setIsSpinOpen(false)} />
     </div>
+  );
+}
+
+function AddRecordButton({
+  presses,
+  label,
+  onClick,
+}: {
+  presses: number;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      type="button"
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      className="inline-flex w-fit items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-surface shadow-[0_10px_24px_rgba(173,133,129,0.24)] transition hover:bg-primary-strong"
+    >
+      <motion.span
+        key={presses}
+        initial={{ rotate: -45, scale: 0.8 }}
+        animate={{ rotate: 0, scale: 1 }}
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        className="grid size-5 place-items-center"
+      >
+        <Plus className="size-5" strokeWidth={2} />
+      </motion.span>
+      {label}
+    </motion.button>
+  );
+}
+
+function ActionLink({
+  href,
+  icon,
+  title,
+  detail,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="rounded-[22px] border border-border bg-surface p-4 transition hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(44,44,44,0.08)]"
+    >
+      <span className="grid size-10 place-items-center rounded-full bg-soft text-primary-strong">
+        {icon}
+      </span>
+      <span className="mt-3 block font-serif text-base text-charcoal">{title}</span>
+      <span className="mt-1 block text-xs text-muted">{detail}</span>
+    </Link>
   );
 }
